@@ -16,9 +16,8 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import static com.venkateshamurthy.exceptional.Delayer.FIBONACCI;
+import static org.junit.jupiter.api.Assertions.*;
 @Slf4j
 @ExtensionMethod({RxSupplier.class, RxFunction.class, RxConsumer.class})
 public class RxUtilsTest {
