@@ -1,4 +1,4 @@
-package com.github.venkateshamurthy.exceptional.pojo;
+package io.github.venkateshamurthy.exceptional.pojo;
 
 import io.github.resilience4j.core.functions.Either;
 import io.vavr.control.Try;

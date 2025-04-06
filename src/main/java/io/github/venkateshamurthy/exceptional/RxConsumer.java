@@ -1,4 +1,4 @@
-package com.github.venkateshamurthy.exceptional;
+package io.github.venkateshamurthy.exceptional;
 
 import io.github.resilience4j.bulkhead.Bulkhead;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
@@ -9,8 +9,8 @@ import io.github.resilience4j.retry.Retry;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-import static com.github.venkateshamurthy.exceptional.RxSupplier.rxCheckedSupplier;
-import static com.github.venkateshamurthy.exceptional.RxSupplier.rxSupplier;
+import static io.github.venkateshamurthy.exceptional.RxSupplier.rxCheckedSupplier;
+import static io.github.venkateshamurthy.exceptional.RxSupplier.rxSupplier;
 
 
 public class RxConsumer {

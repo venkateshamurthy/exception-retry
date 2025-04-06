@@ -1,4 +1,4 @@
-package com.github.venkateshamurthy.exceptional;
+package io.github.venkateshamurthy.exceptional;
 
 import io.github.resilience4j.bulkhead.Bulkhead;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
@@ -12,7 +12,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
-import static com.github.venkateshamurthy.exceptional.RxTry.ceMapper;
+import static io.github.venkateshamurthy.exceptional.RxTry.ceMapper;
 @Slf4j
 @ExtensionMethod(RxTry.class)
 public class RxCallable {

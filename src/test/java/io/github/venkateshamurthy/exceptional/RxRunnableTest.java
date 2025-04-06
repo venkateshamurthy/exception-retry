@@ -1,6 +1,6 @@
-package com.github.venkateshamurthy.exceptional;
+package io.github.venkateshamurthy.exceptional;
 
-import com.github.venkateshamurthy.exceptional.pojo.HelloWorldService;
+import io.github.venkateshamurthy.exceptional.pojo.HelloWorldService;
 import io.github.resilience4j.bulkhead.Bulkhead;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.core.functions.CheckedRunnable;
@@ -21,8 +21,8 @@ import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
-import static com.github.venkateshamurthy.exceptional.Delayer.FIBONACCI;
-import static com.github.venkateshamurthy.exceptional.RxRunnable.*;
+import static io.github.venkateshamurthy.exceptional.Delayer.FIBONACCI;
+import static io.github.venkateshamurthy.exceptional.RxRunnable.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;

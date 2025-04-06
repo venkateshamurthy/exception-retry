@@ -1,4 +1,4 @@
-package com.github.venkateshamurthy.exceptional;
+package io.github.venkateshamurthy.exceptional;
 
 import io.github.resilience4j.core.IntervalFunction;
 import io.vavr.collection.Stream;

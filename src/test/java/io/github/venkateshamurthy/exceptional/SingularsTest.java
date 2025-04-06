@@ -1,4 +1,4 @@
-package com.github.venkateshamurthy.exceptional;
+package io.github.venkateshamurthy.exceptional;
 
 import io.github.resilience4j.bulkhead.Bulkhead;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static com.github.venkateshamurthy.exceptional.Delayer.FIBONACCI;
+import static io.github.venkateshamurthy.exceptional.Delayer.FIBONACCI;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Slf4j
