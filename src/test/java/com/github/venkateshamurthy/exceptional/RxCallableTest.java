@@ -1,6 +1,6 @@
-package com.venkateshamurthy.exceptional;
+package com.github.venkateshamurthy.exceptional;
 
-import com.venkateshamurthy.exceptional.pojo.HelloWorldService;
+import com.github.venkateshamurthy.exceptional.pojo.HelloWorldService;
 import io.github.resilience4j.bulkhead.Bulkhead;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.ratelimiter.RateLimiter;
@@ -23,12 +23,13 @@ import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
-import static com.venkateshamurthy.exceptional.Delayer.FIBONACCI;
-import static com.venkateshamurthy.exceptional.RxCallable.*;
+import static com.github.venkateshamurthy.exceptional.Delayer.FIBONACCI;
+import static com.github.venkateshamurthy.exceptional.RxCallable.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.*;
+import com.github.venkateshamurthy.exceptional.pojo.*;
 
 @Slf4j
 @ExtensionMethod({RxCallable.class, RxTry.class})
@@ -103,7 +104,7 @@ public class RxCallableTest {
             final AtomicInteger i = new AtomicInteger(-1);
             @Override
             public String call() throws Exception {
-                System.out.println("I="+i.incrementAndGet());
+                log.info("I="+i.incrementAndGet());
                 if(i.get()      < number - 3) throw new IOException(i+"-ioException");
                 else if(i.get() < number - 2) throw new RemoteException(i+"-remoteException");
                 else if(i.get() < number - 1) throw new AccessException(i+"-accessException");
@@ -112,16 +113,16 @@ public class RxCallableTest {
             public  Callable<String> get() {
                 if      (number == 1) return this;
                 else if (number == 2) return errorConsumedCallable(this,
-                        AccessException.class, x -> System.out.println("x="+x.toString()));
+                        AccessException.class, x -> log.info("x="+x.toString()));
                 else if (number == 3) return errorConsumedCallable(this,
-                        AccessException.class, x -> System.out.println("x1="+x.toString()),
-                        RemoteException.class, x -> System.out.println("x2="+x.toString()));
+                        AccessException.class, x -> log.info("x1="+x.toString()),
+                        RemoteException.class, x -> log.info("x2="+x.toString()));
                 else                  return errorConsumedCallable(this,
-                            // remember you need to align the exception class in hierarchy here
-                            // always the least child hierarchy in the first to base exception in the last
-                            AccessException.class, x -> System.out.println("xa="+x.toString()),
-                            RemoteException.class, x -> System.out.println("xb="+x.toString()),
-                            IOException.class,     x -> System.out.println("xc="+x.toString()));
+                        // remember you need to align the exception class in hierarchy here
+                        // always the least child hierarchy in the first to base exception in the last
+                        AccessException.class, x -> log.info("xa="+x.toString()),
+                        RemoteException.class, x -> log.info("xb="+x.toString()),
+                        IOException.class,     x -> log.info("xc="+x.toString()));
             }
         }
 

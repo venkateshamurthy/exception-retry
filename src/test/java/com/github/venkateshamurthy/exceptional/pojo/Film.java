@@ -1,4 +1,4 @@
-package com.venkateshamurthy.exceptional.pojo;
+package com.github.venkateshamurthy.exceptional.pojo;
 
 import lombok.Builder;
 import lombok.Getter;

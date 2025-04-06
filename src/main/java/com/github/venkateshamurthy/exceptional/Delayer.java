@@ -1,4 +1,4 @@
-package com.venkateshamurthy.exceptional;
+package com.github.venkateshamurthy.exceptional;
 
 import io.github.resilience4j.core.IntervalFunction;
 import io.vavr.collection.Stream;
@@ -77,6 +77,10 @@ public enum Delayer implements BiFunction<Duration, Duration, IntervalFunction>{
     private static final Random RANDOM = new Random(37L);
 
     /** Convenience functions. */
+    public IntervalFunction millis(final long initial, final long maxDelay) {
+        return apply(ofMillis(initial), ofMillis(maxDelay));
+    }
+
     public IntervalFunction seconds(final long initial, final long maxDelay) {
         return apply(ofSeconds(initial), ofSeconds(maxDelay));
     }

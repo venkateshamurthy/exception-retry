@@ -1,4 +1,4 @@
-package com.venkateshamurthy.exceptional;
+package com.github.venkateshamurthy.exceptional;
 
 import io.github.resilience4j.bulkhead.Bulkhead;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
@@ -8,7 +8,6 @@ import io.github.resilience4j.retry.RetryConfig;
 import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.schedulers.Schedulers;
-import lombok.experimental.ExtensionMethod;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static com.venkateshamurthy.exceptional.Delayer.FIBONACCI;
+import static com.github.venkateshamurthy.exceptional.Delayer.FIBONACCI;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Slf4j

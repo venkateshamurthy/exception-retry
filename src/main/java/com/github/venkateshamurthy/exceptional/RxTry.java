@@ -1,4 +1,4 @@
-package com.venkateshamurthy.exceptional;
+package com.github.venkateshamurthy.exceptional;
 import io.github.resilience4j.core.functions.CheckedRunnable;
 import io.github.resilience4j.core.functions.CheckedSupplier;
 import io.vavr.API;

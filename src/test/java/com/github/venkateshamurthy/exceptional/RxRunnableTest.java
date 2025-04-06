@@ -1,6 +1,6 @@
-package com.venkateshamurthy.exceptional;
+package com.github.venkateshamurthy.exceptional;
 
-import com.venkateshamurthy.exceptional.pojo.HelloWorldService;
+import com.github.venkateshamurthy.exceptional.pojo.HelloWorldService;
 import io.github.resilience4j.bulkhead.Bulkhead;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.core.functions.CheckedRunnable;
@@ -21,8 +21,8 @@ import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
-import static com.venkateshamurthy.exceptional.Delayer.FIBONACCI;
-import static com.venkateshamurthy.exceptional.RxRunnable.*;
+import static com.github.venkateshamurthy.exceptional.Delayer.FIBONACCI;
+import static com.github.venkateshamurthy.exceptional.RxRunnable.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -75,7 +75,7 @@ public class RxRunnableTest {
                 if(i.get()      < number - 3) throw new IllegalArgumentException(i+"-IllegalArgumentException");
                 else if(i.get() < number - 2) throw new ArithmeticException(i+"-ArithmeticException");
                 else if(i.get() < number - 1) throw new ArrayIndexOutOfBoundsException(i+"-ArrayIndexOutOfBoundsException");
-                else System.out.println(greeting);
+                else log.info(greeting);
             }
             public  Runnable get() {
                 if      (number == 1) return this;
@@ -107,7 +107,7 @@ public class RxRunnableTest {
                 if(i.get()      < number - 3) throw new IllegalArgumentException(i+"-IllegalArgumentException");
                 else if(i.get() < number - 2) throw new ArithmeticException(i+"-ArithmeticException");
                 else if(i.get() < number - 1) throw new ArrayIndexOutOfBoundsException(i+"-accessException");
-                else System.out.println(greeting);
+                else log.info(greeting);
             }
             public  Runnable get() {
                 if      (number == 1) return this;

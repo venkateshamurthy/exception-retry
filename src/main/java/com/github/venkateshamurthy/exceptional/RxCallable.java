@@ -1,4 +1,4 @@
-package com.venkateshamurthy.exceptional;
+package com.github.venkateshamurthy.exceptional;
 
 import io.github.resilience4j.bulkhead.Bulkhead;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
@@ -12,7 +12,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
-import static com.venkateshamurthy.exceptional.RxTry.ceMapper;
+import static com.github.venkateshamurthy.exceptional.RxTry.ceMapper;
 @Slf4j
 @ExtensionMethod(RxTry.class)
 public class RxCallable {
@@ -31,28 +31,28 @@ public class RxCallable {
     }
 
     public static <X extends Exception, T> Callable<T> errorMappedCallable(
-            Callable<T> callable,
+            Callable<T>  callable,
             Class<X> ex, UnaryOperator<Exception> op) {
         return ()->callable.tryWrap().mapException(ex, op).getOrElseThrow(ceMapper);
     }
 
     public static <X extends Exception, X2 extends Exception, T> Callable<T> errorMappedCallable(
-            Callable<T> callable,
-            Class<X> ex, UnaryOperator<Exception> op,
+            Callable<T>    callable,
+            Class<X>  ex,  UnaryOperator<Exception> op,
             Class<X2> ex2, UnaryOperator<Exception> op2) {
         return ()->callable.tryWrap().mapException(ex, op, ex2, op2).getOrElseThrow(ceMapper);
     }
 
     public static <X extends Exception, X2 extends Exception,X3 extends Exception,T> Callable<T> errorMappedCallable(
-            Callable<T> callable,
-            Class<X>  ex,   UnaryOperator<Exception> op,
+            Callable<T>    callable,
+            Class<X>  ex,  UnaryOperator<Exception> op,
             Class<X2> ex2, UnaryOperator<Exception> op2,
             Class<X3> ex3, UnaryOperator<Exception> op3) {
         return ()->callable.tryWrap().mapException(ex, op, ex2, op2, ex3, op3).getOrElseThrow(ceMapper);
     }
 
     public static <X extends Exception, T> Callable<T> errorMappedCallable(
-            Callable<T> callable,
+            Callable<T>  callable,
             Class<X> ex, Supplier<? extends Exception> op) {
         return ()->callable.tryWrap().mapException(ex, op).getOrElseThrow(ceMapper);
     }

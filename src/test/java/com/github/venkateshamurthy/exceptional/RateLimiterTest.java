@@ -1,4 +1,4 @@
-package com.venkateshamurthy.exceptional;
+package com.github.venkateshamurthy.exceptional;
 
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
@@ -53,9 +53,9 @@ public class RateLimiterTest {
 
     @AllArgsConstructor @Getter
     private enum RxCheckedSupplierSource  implements CheckedSupplier {
-        CC(RxSupplier.rxCheckedSupplier((String s)->System.out.println(s), "Checked Consumer: Hello World!")),
+        CC(RxSupplier.rxCheckedSupplier((String s)->log.info(s), "Checked Consumer: Hello World!")),
         CBIF(RxSupplier.rxCheckedSupplier(String::concat, "Checked Bi Function: Hello", " World!")),
-        CBIC(RxSupplier.rxCheckedSupplier((String s, String s2)->System.out.println(s+s2), "Checked Bi Consumer: Hello", " World!"));
+        CBIC(RxSupplier.rxCheckedSupplier((String s, String s2)->log.info(s+s2), "Checked Bi Consumer: Hello", " World!"));
 
         private CheckedSupplier core;
         private void setRateLimiter(RateLimiter RL){core = core.rateLimitCheckedSupplier(RL);}
@@ -68,9 +68,9 @@ public class RateLimiterTest {
     @AllArgsConstructor
     @Getter
     private enum RxSupplierSource  implements Supplier {
-        CONSUMER(RxSupplier.rxSupplier((String s)->System.out.println(s), "Consumer: Hello World!")),
+        CONSUMER(RxSupplier.rxSupplier((String s)->log.info(s), "Consumer: Hello World!")),
         BI_FUNCTION(RxSupplier.rxSupplier(String::concat, "Bi Function: Hello", " World!")),
-        BI_CONSUMER(RxSupplier.rxSupplier((String s1, String s2)->System.out.println(s1+s2), "Bi Consumer: Hello", " World!"));
+        BI_CONSUMER(RxSupplier.rxSupplier((String s1, String s2)->log.info(s1+s2), "Bi Consumer: Hello", " World!"));
 
         private Supplier core;
         private void setRateLimiter(RateLimiter RL){core = core.rateLimitSupplier(RL);}
@@ -103,15 +103,15 @@ public class RateLimiterTest {
         decorated.setRateLimiter(rl);
         given(rl.acquirePermission(1)).willReturn(false);
         Try decoratedSupplierResult = Try.ofSupplier(decorated.resetInvoked())
-                .onFailure(RequestNotPermitted.class, e->System.out.println("HHHHHAAAA:"+e));
+                .onFailure(RequestNotPermitted.class, e->log.info("HHHHHAAAA:"+e));
         assertThat(decoratedSupplierResult.isFailure()).isTrue();
         assertThat(decoratedSupplierResult.getCause()).isInstanceOf(RequestNotPermitted.class);
         assertFalse(decorated.isInvoked(), "The invocation  should not have occurred");
 
         given(rl.acquirePermission(1)).willReturn(true);
         Try secondSupplierResult = Try.ofSupplier(decorated.resetInvoked())
-                .onSuccess(s->System.out.println("secondSupplierResult:SUCCESS:"+s))
-                .onFailure(RequestNotPermitted.class, e->System.out.println("HHHHHAAAA:"+e));;
+                .onSuccess(s->log.info("secondSupplierResult:SUCCESS:"+s))
+                .onFailure(RequestNotPermitted.class, e->log.info("HHHHHAAAA:"+e));;
         assertThat(secondSupplierResult.isSuccess()).isTrue();
         assertTrue(decorated.isInvoked(), "The invocation  should  have occurred");
     }

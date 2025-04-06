@@ -1,4 +1,4 @@
-package com.venkateshamurthy.exceptional;
+package com.github.venkateshamurthy.exceptional;
 
 import io.github.resilience4j.bulkhead.Bulkhead;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
@@ -12,8 +12,8 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
 
-import static com.venkateshamurthy.exceptional.RxTry.ceMapper;
-import static com.venkateshamurthy.exceptional.RxTry.rteMapper;
+import static com.github.venkateshamurthy.exceptional.RxTry.ceMapper;
+import static com.github.venkateshamurthy.exceptional.RxTry.rteMapper;
 import static org.apache.commons.lang3.exception.ExceptionUtils.throwableOfType;
 
 @ExtensionMethod(RxTry.class)
