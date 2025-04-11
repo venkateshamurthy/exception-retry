@@ -1,12 +1,12 @@
 package io.github.venkateshamurthy.exceptional;
 
-import io.github.venkateshamurthy.exceptional.pojo.HelloWorldService;
 import io.github.resilience4j.bulkhead.Bulkhead;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.core.functions.CheckedRunnable;
 import io.github.resilience4j.ratelimiter.RateLimiter;
 import io.github.resilience4j.retry.Retry;
 import io.github.resilience4j.retry.RetryConfig;
+import io.github.venkateshamurthy.exceptional.pojo.HelloWorldService;
 import io.vavr.control.Try;
 import lombok.SneakyThrows;
 import lombok.experimental.ExtensionMethod;
@@ -31,7 +31,7 @@ import static org.mockito.Mockito.*;
 
 @Slf4j
 @ExtensionMethod({RxRunnable.class, RxTry.class})
-public class RxRunnableTest {
+class RxRunnableTest {
     private final int retryMaxAttempts = 5;
     Bulkhead bh;
     Retry rt;
@@ -48,7 +48,7 @@ public class RxRunnableTest {
         rt = Retry.of("rt", RetryConfig.custom()
                 .maxAttempts(retryMaxAttempts)
                 .failAfterMaxAttempts(true)
-                .intervalFunction(FIBONACCI.seconds(1,120))
+                .intervalFunction(FIBONACCI.millis(10,1200))
                 .retryExceptions(Exception.class,
                         TimeoutException.class,
                         NullPointerException.class,

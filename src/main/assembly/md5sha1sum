@@ -1,0 +1,8 @@
+#!/bin/bash
+cd target
+list=`ls exception-retry-1.0*`
+for entry in $list; do
+   md5sum  $entry | cut -d ' ' -f 1 > $entry.md5;
+   sha1sum $entry | cut -d ' ' -f 1 > $entry.sha1;
+done
+cd ../

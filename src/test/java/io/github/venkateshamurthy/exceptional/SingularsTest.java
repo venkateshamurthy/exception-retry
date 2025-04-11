@@ -35,7 +35,7 @@ class SingularsTest {
         rt = Retry.of("rt", RetryConfig.custom()
                 .maxAttempts(50)
                 .failAfterMaxAttempts(true)
-                .intervalFunction(FIBONACCI.seconds(1,120))
+                .intervalFunction(FIBONACCI.millis(10,1200))
                 .retryExceptions(TimeoutException.class)
                 .build());
         cb = CircuitBreaker.ofDefaults("cb");
