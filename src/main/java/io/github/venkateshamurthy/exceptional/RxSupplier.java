@@ -8,11 +8,9 @@ import io.github.resilience4j.core.functions.CheckedFunction;
 import io.github.resilience4j.core.functions.CheckedSupplier;
 import io.github.resilience4j.ratelimiter.RateLimiter;
 import io.github.resilience4j.retry.Retry;
-import io.vavr.control.Try;
 import lombok.SneakyThrows;
 import lombok.experimental.ExtensionMethod;
 
-import java.util.concurrent.Callable;
 import java.util.function.*;
 
 import static io.github.venkateshamurthy.exceptional.RxTry.ceMapper;
@@ -213,7 +211,7 @@ public class RxSupplier {
             CheckedSupplier<R> supplier,
             //Remember you cant use checked consumer here
             Class<X>  ex,      Consumer<X> op){
-        return ()->supplier.tyrWrap().consumeFailure(ex, op).getOrElseThrow(ceMapper);
+        return ()->supplier.tryWrap().consumeFailure(ex, op).getOrElseThrow(ceMapper);
     }
 
     /**
@@ -233,7 +231,7 @@ public class RxSupplier {
             CheckedSupplier<R>    supplier,
             Class<X>  ex,  Consumer<X> op,
             Class<X2> ex2, Consumer<X2> op2){
-        return ()->supplier.tyrWrap().consumeFailure(ex, op, ex2, op2).getOrElseThrow(ceMapper);
+        return ()->supplier.tryWrap().consumeFailure(ex, op, ex2, op2).getOrElseThrow(ceMapper);
     }
 
     /**
@@ -254,7 +252,7 @@ public class RxSupplier {
             Class<X>  ex,  Consumer<X> op,
             Class<X2> ex2, Consumer<X2> op2,
             Class<X3> ex3, Consumer<X3> op3){
-        return ()->supplier.tyrWrap().consumeFailure(ex, op, ex2, op2, ex3, op3).getOrElseThrow(ceMapper);
+        return ()->supplier.tryWrap().consumeFailure(ex, op, ex2, op2, ex3, op3).getOrElseThrow(ceMapper);
     }
 
     /**
@@ -270,7 +268,7 @@ public class RxSupplier {
     CheckedSupplier<R> errorMappedCheckedSupplier(
             CheckedSupplier<R>  supplier,
             Class<X>  ex,       UnaryOperator<Exception> op){
-        return ()->supplier.tyrWrap().mapException(ex, op).getOrElseThrow(ceMapper);
+        return ()->supplier.tryWrap().mapException(ex, op).getOrElseThrow(ceMapper);
     }
 
     /**
@@ -289,7 +287,7 @@ public class RxSupplier {
             CheckedSupplier<R>  supplier,
             Class<X>  ex,       UnaryOperator<Exception> op,
             Class<X2> ex2,      UnaryOperator<Exception> op2 ) {
-        return ()->supplier.tyrWrap().mapException(ex, op, ex2, op2).getOrElseThrow(ceMapper);
+        return ()->supplier.tryWrap().mapException(ex, op, ex2, op2).getOrElseThrow(ceMapper);
     }
 
     /**
@@ -309,6 +307,6 @@ public class RxSupplier {
             Class<X>  ex,       UnaryOperator<Exception> op,
             Class<X2> ex2,      UnaryOperator<Exception> op2,
             Class<X3> ex3,      UnaryOperator<Exception> op3) {
-        return ()->supplier.tyrWrap().mapException(ex, op, ex2, op2, ex3, op3).getOrElseThrow(ceMapper);
+        return ()->supplier.tryWrap().mapException(ex, op, ex2, op2, ex3, op3).getOrElseThrow(ceMapper);
     }
 }

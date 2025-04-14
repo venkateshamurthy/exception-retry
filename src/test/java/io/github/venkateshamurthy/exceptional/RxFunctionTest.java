@@ -27,6 +27,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.function.UnaryOperator;
 
 import static io.github.venkateshamurthy.exceptional.Delayer.FIBONACCI;
 import static io.github.venkateshamurthy.exceptional.RxFunction.*;
@@ -130,6 +131,136 @@ class RxFunctionTest {
         }
         assertEquals(greeting.toUpperCase(), assertDoesNotThrow(()->new temp().get().retryCheckedFunction(rt).apply(greeting)));
     }
+
+    @ParameterizedTest
+    @ValueSource(ints = {1, 2, 3, 4})
+    @SneakyThrows
+    void testErrorMappedCheckedBiFunction(int number)  {
+        class temp implements CheckedBiFunction<String, String, String>, Supplier<CheckedBiFunction<String, String, String>> {
+            final AtomicInteger i = new AtomicInteger(-1);
+            @Override
+            public String apply(String in, String out)  throws Throwable{
+                log.info("I="+i.incrementAndGet());
+                if(i.get()      < number - 3) throw new IOException(i+"-ioException");
+                else if(i.get() < number - 2) throw new RemoteException(i+"-remoteException");
+                else if(i.get() < number - 1) throw new AccessException(i+"-accessException");
+                else return greeting.toUpperCase();
+            }
+            public  CheckedBiFunction<String, String, String> get() {
+                if      (number == 1) return this;
+                else if (number == 2) return errorMappedCheckedBiFunction(this,
+                        AccessException.class, x -> new SQLTimeoutException(x.toString()));
+                else if (number == 3) return errorMappedCheckedBiFunction(this,
+                        AccessException.class, x -> new SQLTimeoutException(x.toString()),
+                        RemoteException.class, x -> new InterruptedException(x.toString()));
+                else return errorMappedCheckedBiFunction(this,
+                        // remember you need to align the exception class in hierarchy here
+                        // always the least child hierarchy in the first to base exception in the last
+                        AccessException.class, x -> new SQLTimeoutException(x.toString()),
+                        RemoteException.class, x -> new InterruptedException(x.toString()),
+                        IOException.class, x -> new UnsupportedOperationException(x.toString()));
+            }
+        }
+        assertEquals(greeting.toUpperCase(), assertDoesNotThrow(()->new temp().get().retryCheckedBiFunction(rt).apply(greeting,"")));
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {1, 2, 3, 4})
+    @SneakyThrows
+    void testErrorMappedBiFunction(int number)  {
+        class temp implements BiFunction<String, String, String>, Supplier<BiFunction<String, String, String>> {
+            final AtomicInteger i = new AtomicInteger(-1);
+            @Override
+            public String apply(String in, String out)  {
+                log.info("I="+i.incrementAndGet());
+                if(i.get()      < number - 3) throw new RuntimeException(i+"-runtimeException");
+                else if(i.get() < number - 2) throw new NullPointerException(i+"-nullPtrException");
+                else if(i.get() < number - 1) throw new UnsupportedOperationException(i+"-unsupportedException");
+                else return greeting.toUpperCase();
+            }
+            public  BiFunction<String, String, String> get() {
+                if      (number == 1) return this;
+                else if (number == 2) return errorMappedBiFunction(this,
+                        UnsupportedOperationException.class, UnaryOperator.identity());
+                else if (number == 3) return errorMappedBiFunction(this,
+                        UnsupportedOperationException.class, UnaryOperator.identity(),
+                        NullPointerException.class, UnaryOperator.identity());
+                else return errorMappedBiFunction(this,
+                        // remember you need to align the exception class in hierarchy here
+                        // always the least child hierarchy in the first to base exception in the last
+                        UnsupportedOperationException.class, UnaryOperator.identity(),
+                        NullPointerException.class, UnaryOperator.identity(),
+                        RuntimeException.class, UnaryOperator.identity());
+            }
+        }
+        assertEquals(greeting.toUpperCase(), assertDoesNotThrow(()->new temp().get().retryBiFunction(rt).apply(greeting,"")));
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {1, 2, 3, 4})
+    @SneakyThrows
+    void testErrorConsumedCheckedBiFunction(int number)  {
+        class temp implements CheckedBiFunction<String, String, String>, Supplier<CheckedBiFunction<String, String, String>> {
+            final AtomicInteger i = new AtomicInteger(-1);
+            @Override
+            public String apply(String in, String out)  throws Throwable{
+                log.info("I="+i.incrementAndGet());
+                if(i.get()      < number - 3) throw new IOException(i+"-ioException");
+                else if(i.get() < number - 2) throw new RemoteException(i+"-remoteException");
+                else if(i.get() < number - 1) throw new AccessException(i+"-accessException");
+                else return greeting.toUpperCase();
+            }
+            public  CheckedBiFunction<String, String, String> get() {
+                var x = "something";
+                if      (number == 1) return this;
+                else if (number == 2) return errorConsumedCheckedBiFunction(this,
+                        AccessException.class, (ex) -> log.info("{}", ex));
+                else if (number == 3) return errorConsumedCheckedBiFunction(this,
+                        AccessException.class, (ex) -> log.info("{}", ex),
+                        RemoteException.class, (ex) -> log.info("{}", ex));
+                else return errorConsumedCheckedBiFunction(this,
+                        // remember you need to align the exception class in hierarchy here
+                        // always the least child hierarchy in the first to base exception in the last
+                        AccessException.class, (ex) -> log.info("{}", ex),
+                        RemoteException.class, (ex) -> log.info("{}", ex),
+                        IOException.class, (ex) -> log.info("{}", ex));
+            }
+        }
+        assertEquals(greeting.toUpperCase(), assertDoesNotThrow(()->new temp().get().retryCheckedBiFunction(rt).apply(greeting,"")));
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {1, 2, 3, 4})
+    @SneakyThrows
+    void testErrorConsumedBiFunction(int number)  {
+        class temp implements BiFunction<String, String, String>, Supplier<BiFunction<String, String, String>> {
+            final AtomicInteger i = new AtomicInteger(-1);
+            @Override
+            public String apply(String in, String out)  {
+                log.info("I="+i.incrementAndGet());
+                if(i.get()      < number - 3) throw new RuntimeException(i+"-runtimeException");
+                else if(i.get() < number - 2) throw new NullPointerException(i+"-nullPtrException");
+                else if(i.get() < number - 1) throw new UnsupportedOperationException(i+"-unsupportedException");
+                else return greeting.toUpperCase();
+            }
+            public  BiFunction<String, String, String> get() {
+                if      (number == 1) return this;
+                else if (number == 2) return errorConsumedBiFunction(this,
+                        UnsupportedOperationException.class, x->{});
+                else if (number == 3) return errorConsumedBiFunction(this,
+                        UnsupportedOperationException.class, x->{},
+                        NullPointerException.class, x->{});
+                else return errorConsumedBiFunction(this,
+                        // remember you need to align the exception class in hierarchy here
+                        // always the least child hierarchy in the first to base exception in the last
+                        UnsupportedOperationException.class, x->{},
+                        NullPointerException.class, x->{},
+                        RuntimeException.class, x->{});
+            }
+        }
+        assertEquals(greeting.toUpperCase(), assertDoesNotThrow(()->new temp().get().retryBiFunction(rt).apply(greeting,"")));
+    }
+
     @ParameterizedTest
     @ValueSource(ints = {1, 2, 3, 4})
     void testErrorConsumedFunction(int number)  {
@@ -159,6 +290,37 @@ class RxFunctionTest {
             }
         }
         assertEquals(greeting.toUpperCase(), assertDoesNotThrow(()->new temp().get().retryFunction(rt).apply(greeting)));
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {1, 2, 3, 4})
+    void testErrorConsumedCheckedFunction(int number)  {
+        class temp implements CheckedFunction<String, String>, Supplier<CheckedFunction<String, String>> {
+            final AtomicInteger i = new AtomicInteger(-1);
+            @Override
+            public String apply(String in)  {
+                log.info("I="+i.incrementAndGet());
+                if(i.get()      < number - 3) throw new UnsupportedOperationException(i+"-unsupportedException");
+                else if(i.get() < number - 2) throw new IllegalStateException(i+"-illegalStateException");
+                else if(i.get() < number - 1) throw new NullPointerException(i+"-nullPtrException");
+                else return greeting.toUpperCase();
+            }
+            public  CheckedFunction<String, String> get() {
+                if      (number == 1) return this;
+                else if (number == 2) return errorConsumedCheckedFunction(this,
+                        NullPointerException.class, x->{});
+                else if (number == 3) return errorConsumedCheckedFunction(this,
+                        NullPointerException.class, x->{},
+                        IllegalStateException.class, x->{});
+                else                  return errorConsumedCheckedFunction(this,
+                        // remember you need to align the exception class in hierarchy here
+                        // always the least child hierarchy in the first to base exception in the last
+                        NullPointerException.class, x->{},
+                        IllegalStateException.class, x->{},
+                        UnsupportedOperationException.class, x->{});
+            }
+        }
+        assertEquals(greeting.toUpperCase(), assertDoesNotThrow(()->new temp().get().retryCheckedFunction(rt).apply(greeting)));
     }
 
     @Test
@@ -247,11 +409,12 @@ class RxFunctionTest {
         final AtomicInteger attempt=new AtomicInteger();
         CheckedBiFunction<String, String, String> greeting = (in, out)->in+out+ attempt.get();
         Retry.Metrics metrics = rt.getMetrics();
-        CheckedBiFunction<String, String, String> callable = toCheckedBiFunction(helloWorldService::returnHelloWorldWithTitleName)
+        CheckedBiFunction<String, String, String> callable =
+                toCheckedBiFunction(helloWorldService::returnHelloWorldWithTitleNameWithException)
                 .retryCheckedBiFunction(rt); //Set for retryMaxAttempts = 5
 
         var error = new IOException("IOException!"+ attempt.incrementAndGet());
-        var mck = when(helloWorldService.returnHelloWorldWithTitleName("",""))
+        var mck = when(helloWorldService.returnHelloWorldWithTitleNameWithException("",""))
                 .thenThrow(error, error, error, error, error) // exhaust all retries (5 times)
                 .thenThrow(error, error, error)               // again 3 times throw
                 .thenReturn(greeting.apply("",""));      // so at retryMaxAttempts+4 it should work

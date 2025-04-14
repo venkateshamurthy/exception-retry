@@ -26,6 +26,7 @@ import org.mockito.Mockito;
 
 import java.io.IOException;
 import java.time.Duration;
+import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -33,6 +34,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import static io.github.venkateshamurthy.exceptional.RxCallable.toCallable;
 import static io.github.venkateshamurthy.exceptional.RxFunction.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -42,7 +44,7 @@ import static org.mockito.Mockito.*;
 
 
 @SuppressWarnings("unchecked")
-@ExtensionMethod({RxSupplier.class, RxFunction.class, RxTry.class})
+@ExtensionMethod({RxSupplier.class, RxFunction.class, RxCallable.class, RxTry.class})
 @Slf4j
 class RateLimiterTest {
 
@@ -69,7 +71,20 @@ class RateLimiterTest {
     }
 
     @AllArgsConstructor @Getter
-    private enum RxCheckedSupplierSource  implements CheckedSupplier {
+    private enum  RxCallableSource  implements Callable {
+        DEFAULT(toCallable(()->"Heelo World!")),
+        EXCEPTION(toCallable(()->{throw new Exception();}));
+
+        private Callable core;
+        private void setRateLimiter(RateLimiter RL){core = core.rateLimitCallable(RL);}
+        private final AtomicBoolean invoked = new AtomicBoolean(false);
+        RxCallableSource resetInvoked() {invoked.set(false);return this;}
+        boolean isInvoked(){ return invoked.get(); }
+        @SneakyThrows public Object call() {var result= core.call();invoked.set(true);return result;}
+    }
+
+    @AllArgsConstructor @Getter
+    private enum  RxCheckedSupplierSource  implements CheckedSupplier {
         CC(RxSupplier.rxCheckedSupplier((String s)->log.info(s), "Checked Consumer: Hello World!")),
         CBIF(RxSupplier.rxCheckedSupplier(String::concat, "Checked Bi Function: Hello", " World!")),
         CBIC(RxSupplier.rxCheckedSupplier((String s, String s2)->log.info(s+s2), "Checked Bi Consumer: Hello", " World!"));
@@ -112,6 +127,17 @@ class RateLimiterTest {
         Try secondSupplierResult = Try.of(decorated.resetInvoked()::get);
         assertThat(secondSupplierResult.isSuccess()).isTrue();
         assertTrue(decorated.isInvoked(), "The invocation  should  have occurred");
+    }
+
+    @ParameterizedTest
+    @EnumSource(RxCallableSource.class)
+    void rateLimitCallable(RxCallableSource decorated) throws Throwable {
+        decorated.setRateLimiter(rl);
+        given(rl.acquirePermission(1)).willReturn(false);
+        Try decoaratedCallableResult = Try.ofCallable(decorated.resetInvoked());
+        assertThat(decoaratedCallableResult.isFailure()).isTrue();
+        assertThat(decoaratedCallableResult.getCause()).isInstanceOf(RequestNotPermitted.class);
+        assertFalse(decorated.isInvoked(), "The invocation should not have occurred");
     }
 
     @ParameterizedTest

@@ -2,11 +2,14 @@ package io.github.venkateshamurthy.exceptional;
 
 import io.github.resilience4j.core.IntervalFunction;
 import io.vavr.collection.Stream;
+import io.vavr.control.Either;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.time.Duration;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 import java.util.Iterator;
 import java.util.Random;
 import java.util.function.BiFunction;
@@ -26,6 +29,7 @@ public enum Delayer implements BiFunction<Duration, Duration, IntervalFunction>{
     DEFAULT(){
         @Override
         public IntervalFunction apply(final Duration initial, final Duration maxDelay) {
+            checkArgs(initial, maxDelay);
             return IntervalFunction.of(initial);
         }
     },
@@ -33,14 +37,18 @@ public enum Delayer implements BiFunction<Duration, Duration, IntervalFunction>{
     DEFAULT_JITTER(){
         @Override
         public IntervalFunction apply(final Duration initial, final Duration maxDelay) {
-            val deltaMillis = RANDOM.nextDouble(0,1) * maxDelay.minus(initial).toMillis();
-            return attempt -> Long.min(maxDelay.toMillis(), initial.toMillis() + Double.doubleToLongBits(deltaMillis));
+            checkArgs(initial, maxDelay);
+            return attempt -> {
+                    val deltaMillis = RANDOM.nextDouble(0, 1) * maxDelay.minus(initial).toMillis();
+                    return Long.min(maxDelay.toMillis(), initial.toMillis() + Double.doubleToLongBits(deltaMillis));
+            };
         }
     },
     /** Linear delay with jitter.*/
     LINEAR_JITTER() {
         @Override
         public IntervalFunction apply(final Duration initial, final Duration maxDelay) {
+            checkArgs(initial, maxDelay);
             return attempt -> Long.min(maxDelay.toMillis(), initial.toMillis() +
                     (attempt>1?RANDOM.nextInt(1, attempt):0) * maxDelay.minus(initial).toMillis());
         }
@@ -49,7 +57,8 @@ public enum Delayer implements BiFunction<Duration, Duration, IntervalFunction>{
     LINEAR() {
         @Override
         public IntervalFunction apply(final Duration initial, final Duration maxDelay) {
-            return attempt -> Long.min(maxDelay.toMillis(), initial.toMillis() + (attempt - 1) * 1000);
+            checkArgs(initial, maxDelay);
+            return attempt -> Long.min(maxDelay.toMillis(), initial.toMillis() + (attempt - 1) * 1000L);
         }
     },
     /** A delay series along the lines of fibonacci.*/
@@ -58,16 +67,16 @@ public enum Delayer implements BiFunction<Duration, Duration, IntervalFunction>{
         final double sqrt5 = 2.236067977d;
         @Override
         public IntervalFunction apply(final Duration initial, final Duration maxDelay) {
-            return attempt -> Math.min(
-                    maxDelay.toMillis(),
-                    initial.toMillis() + round( pow(phi, attempt) / sqrt5 * 1000)
-            );
+            checkArgs(initial, maxDelay);
+            return attempt -> Long.min(maxDelay.toMillis(),
+                    initial.toMillis() + round(pow(phi, attempt) / sqrt5 * 1000));
         }
     },
     /** Exponential delay.*/
     EXPONENTIAL() {
         @Override
         public IntervalFunction apply(final Duration initial, final Duration maxDelay) {
+            checkArgs(initial, maxDelay);
             return attempt -> IntervalFunction.ofExponentialBackoff(initial, 2, maxDelay).apply(attempt);
         }
     },
@@ -75,9 +84,17 @@ public enum Delayer implements BiFunction<Duration, Duration, IntervalFunction>{
     EXPONENTIAL_JITTER() {
         @Override
         public IntervalFunction apply(final Duration initial, final Duration maxDelay) {
+            checkArgs(initial, maxDelay);
             return attempt -> IntervalFunction.ofExponentialRandomBackoff(initial, 2, maxDelay).apply(attempt);
         }
     };
+
+    private static void checkArgs(final Duration initial, final Duration maxDelay) {
+        if (initial.isNegative() || maxDelay.isZero() || maxDelay.isNegative() || maxDelay.minus(initial).isNegative() )
+            throw new IllegalArgumentException(
+                    String.format("initial(%s) / maxDelay(%s) must be positive and maxDelay greater than initial",
+                            initial, maxDelay));
+    }
 
     private static final Random RANDOM = new Random(37L);
 
@@ -108,7 +125,7 @@ public enum Delayer implements BiFunction<Duration, Duration, IntervalFunction>{
      * @return an {@link IntervalFunction} in terms of minutes applying initial and max delays
      */
     public IntervalFunction minutes(final long initial, final long maxDelay) {
-        return apply(ofMinutes(initial), ofMinutes(maxDelay));
+        return minutes(initial*1d, maxDelay*1d);
     }
 
     /**
@@ -118,26 +135,30 @@ public enum Delayer implements BiFunction<Duration, Duration, IntervalFunction>{
      * @return an {@link IntervalFunction} in terms of hours applying initial and max delays
      */
     public IntervalFunction hours(final long initial, final long maxDelay) {
-        return apply(ofHours(initial), ofHours(maxDelay));
+        return hours(initial*1d, maxDelay*1d);
     }
 
     /**
-     * A function to provide the next Duration amount given the attempt number
-     * @param initial delay to wait
-     * @param maxDelay delay to cap
-     * @param attempt number for which {@link Duration} is needed
-     * @return Duration in the series starting from initial to maxDelay
+     * A convenient function to obtain {@link IntervalFunction} in hours preferably fractional hours
+     * @param initial a double quantity that can represent decimal/fractional hours
+     * @param maxDelay a double quantity that can represent decimal/fractional hours
+     * @return {@code IntervalFunction}
      */
+    public IntervalFunction hours(final double initial, final double maxDelay) {
+        return apply(
+                of(round(initial*3600_000d), ChronoUnit.MILLIS),
+                of(round(maxDelay*3600_000d), ChronoUnit.MILLIS));
+    }
+
+    public IntervalFunction minutes(final double initial, final double maxDelay) {
+        return apply(
+                of(round(initial*60_000d), ChronoUnit.MILLIS),
+                of(round(maxDelay*60_000d), ChronoUnit.MILLIS));
+    }
+/* commented for future use.
     public final Duration duration(Duration initial, Duration maxDelay, int attempt) {
         return Stream.ofAll(iterable(initial, maxDelay)).get(attempt-1);
     }
-
-    /**
-     * Iterator that works like an arithmetic, geometric/fibonaccial/exponential series for th Duration
-     * @param initial delay to wait
-     * @param maxDelay delay to cap
-     * @return an {@link Iterable} of {@code Duration}
-     */
     public final Iterable<Duration> iterable(Duration initial, Duration maxDelay) {
         return () -> new Iterator<>() {
             int i = 0;
@@ -147,4 +168,5 @@ public enum Delayer implements BiFunction<Duration, Duration, IntervalFunction>{
             public Duration next() {return lastDelay = ofMillis(func.apply(++i));}
         };
     }
+    */
 }

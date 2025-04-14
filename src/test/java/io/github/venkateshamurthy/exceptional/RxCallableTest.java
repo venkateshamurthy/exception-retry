@@ -91,8 +91,16 @@ class RxCallableTest {
                         RemoteException.class, x->new IllegalStateException(x.toString()),
                         IOException.class, x -> new UnsupportedOperationException(x.toString()));
             }
+
+            public  Callable<String> getWithSuppliedException() {
+                String x="Something like nullpointer";
+                if      (number == 1) return this;
+                else  return errorMappedCallable(this,
+                        AccessException.class, ()->new NullPointerException(x));
+            }
         }
         assertEquals(greeting, assertDoesNotThrow(new temp().get().retryCallable(rt)::call));
+        assertEquals(greeting, assertDoesNotThrow(new temp().getWithSuppliedException().retryCallable(rt)::call));
     }
 
     @ParameterizedTest

@@ -5,7 +5,6 @@ import io.github.resilience4j.core.functions.CheckedRunnable;
 import io.github.resilience4j.core.functions.CheckedSupplier;
 import io.vavr.API;
 
-import io.vavr.CheckedFunction0;
 import io.vavr.control.Try;
 import lombok.experimental.UtilityClass;
 
@@ -203,15 +202,11 @@ public class RxTry {
         return Try.of(RxSupplier.rxSupplier(function, t)::get);
     }
 
-
-    /** Wrapping {@link CheckedFunction0} with a {@link Try}.*/
-    public <R> Try<R> tryWrap(CheckedFunction0<R> supplier){return Try.of(supplier);}
-
     /** Wrapping {@link Supplier} with a {@link Try}.*/
     public <R> Try<R> tryWrap(Supplier<R> supplier){return Try.ofSupplier(supplier);}
 
     /** Wrapping {@link CheckedSupplier} with a {@link Try}.*/
-    public <R> Try<R> tyrWrap(CheckedSupplier<R> checkedSupplier){return Try.of(checkedSupplier::get);}
+    public static <R> Try<R> tryWrap(CheckedSupplier<R> checkedSupplier){return Try.of(checkedSupplier::get);}
 
     /** Wrapping {@link Callable} with a {@link Try}.*/
     public <R> Try<R> tryWrap(Callable<R> callable) {return Try.ofCallable(callable);}
