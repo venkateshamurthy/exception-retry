@@ -13,6 +13,7 @@ import java.util.function.*;
 
 import static io.vavr.API.$;
 import static io.vavr.Predicates.instanceOf;
+import static io.github.venkateshamurthy.exceptional.RxSupplier.*;
 import static org.apache.commons.lang3.exception.ExceptionUtils.throwableOfType;
 
 /**
@@ -161,7 +162,7 @@ public class RxTry {
      * @param <R>  result
      */
     public <T, T2, R> Try<R> tryWrap(CheckedBiFunction<T, T2, R> checkedBiFunction, T t, T2 t2){
-        return Try.of(RxSupplier.rxCheckedSupplier(checkedBiFunction, t, t2)::get);
+        return Try.of(rxCheckedSupplier(checkedBiFunction, t, t2)::get);
     }
 
     /**
@@ -206,7 +207,7 @@ public class RxTry {
     public <R> Try<R> tryWrap(Supplier<R> supplier){return Try.ofSupplier(supplier);}
 
     /** Wrapping {@link CheckedSupplier} with a {@link Try}.*/
-    public static <R> Try<R> tryWrap(CheckedSupplier<R> checkedSupplier){return Try.of(checkedSupplier::get);}
+    public  <R> Try<R> tryWrap(CheckedSupplier<R> checkedSupplier){return Try.of(checkedSupplier::get);}
 
     /** Wrapping {@link Callable} with a {@link Try}.*/
     public <R> Try<R> tryWrap(Callable<R> callable) {return Try.ofCallable(callable);}

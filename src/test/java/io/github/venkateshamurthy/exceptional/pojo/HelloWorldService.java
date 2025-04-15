@@ -9,27 +9,35 @@ import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public interface HelloWorldService {
     AtomicBoolean invoked = new AtomicBoolean(false);
     String greeting = "Hello World!";
-    AtomicBoolean throwException = new AtomicBoolean(false);
+    AtomicInteger throwExceptionCount = new AtomicInteger(0);
     Logger log = LoggerFactory.getLogger(HelloWorldService.class);
-    default boolean shouldThrow() { return throwException.get(); }
+    default boolean shouldThrow() { return throwExceptionCount.get()>0; }
     default boolean isInvoked() { return invoked.get(); }
     default HelloWorldService setInvoked() { invoked.set(true); return this; }
-    default HelloWorldService throwException() { throwException.set(true); return this; }
+    default HelloWorldService throwException() { throwExceptionCount.set(Integer.MAX_VALUE); return this; }
+    default HelloWorldService throwException(int attempts) { throwExceptionCount.set(attempts); return this; }
     default HelloWorldService resetInvoked() { invoked.set(false); return this; }
-    default HelloWorldService revokeException() { throwException.set(false); return this; }
+    default HelloWorldService revokeException() { throwExceptionCount.set(0); return this; }
 
     default String returnHelloWorld() {
         setInvoked();
+        throwExceptionCount.decrementAndGet();
+        if (shouldThrow()) throw new RuntimeException("Should throw exception:"+ throwExceptionCount.get());
         return greeting;
     }
 
     default Future<String> returnHelloWorldFuture() {
         setInvoked();
-        return CompletableFuture.completedFuture(greeting);
+        throwExceptionCount.decrementAndGet();
+        return CompletableFuture.completedFuture(greeting)
+                .handle((a,b)->{if(shouldThrow())
+                {throw new RuntimeException();} else {return a;}
+                });
     }
 
     default Either<RuntimeException, String> returnEither() {
@@ -44,67 +52,78 @@ public interface HelloWorldService {
 
     default String returnHelloWorldWithException() throws IOException {
         setInvoked();
-        if (shouldThrow()) throw new IOException();
+        throwExceptionCount.decrementAndGet();
+        if (shouldThrow()) throw new IOException("ioException:"+ throwExceptionCount.get());
         return  greeting;
     }
 
     default String returnHelloWorldWithName(String name) {
         setInvoked();
-        if (shouldThrow()) throw new RuntimeException();
+        throwExceptionCount.decrementAndGet();
+        if (shouldThrow()) throw new RuntimeException("runtime exception:"+ throwExceptionCount.get());
         return greeting+" "+name;
     }
 
     default String returnHelloWorldWithNameWithException(String name) throws IOException {
         setInvoked();
-        if (shouldThrow()) throw new IOException();
+        throwExceptionCount.decrementAndGet();
+        if (shouldThrow()) throw new IOException("ioException:"+ throwExceptionCount.get());
         return greeting +" "+name;
     }
 
     default String returnHelloWorldWithTitleName(String title, String name) {
         setInvoked();
-        if (shouldThrow()) throw new RuntimeException();
+        throwExceptionCount.decrementAndGet();
+        if (shouldThrow()) throw new RuntimeException("runtime exception:"+ throwExceptionCount.get());
         return greeting + " " + title + " " +name;
     }
 
     default String returnHelloWorldWithTitleNameWithException(String title, String name) throws IOException {
         setInvoked();
-        if (shouldThrow()) throw new IOException();
+        throwExceptionCount.decrementAndGet();
+        if (shouldThrow()) throw new IOException("ioException:"+ throwExceptionCount.get());
         return greeting + " " + title + " " +name;
     }
 
     default void sayHelloWorld() {
         setInvoked();
-        if (shouldThrow()) throw new RuntimeException();
+        throwExceptionCount.decrementAndGet();
+        if (shouldThrow()) throw new RuntimeException("runtime exception:"+ throwExceptionCount.get());
         log.info(greeting);
     }
 
     default void sayHelloWorldWithException() throws IOException {
         setInvoked();
-        if (shouldThrow()) throw new IOException();
+        throwExceptionCount.decrementAndGet();
+        if (shouldThrow()) throw new IOException("ioException:"+ throwExceptionCount.get());
         log.info(greeting);
     }
 
     default void sayHelloWorldWithName(String name) {
         setInvoked();
-        if (shouldThrow()) throw new RuntimeException();
+        throwExceptionCount.decrementAndGet();
+        if (shouldThrow()) throw new RuntimeException("runtime exception:"+ throwExceptionCount.get());
         log.info(greeting);
     }
 
     default void sayHelloWorldWithNameWithException(String name) throws IOException {
         setInvoked();
-        if (shouldThrow()) throw new IOException();
+        throwExceptionCount.decrementAndGet();
+        if (shouldThrow()) throw new IOException("ioException:"+ throwExceptionCount.get());
         log.info(greeting);
     }
 
     default void sayHelloWorldWithTitleName(String title, String name) {
         setInvoked();
-        if (shouldThrow()) throw new RuntimeException();
+        throwExceptionCount.decrementAndGet();
+        if (shouldThrow()) throw new RuntimeException("runtime exception:"+ throwExceptionCount.get());
         log.info(greeting+" "+title+" "+name);
     }
 
     default void sayHelloWorldWithTitleNameWithException(String title, String name) throws IOException {
         setInvoked();
-        if (shouldThrow()) throw new IOException();
+        throwExceptionCount.decrementAndGet();
+        if (shouldThrow()) throw new IOException("ioException:"+ throwExceptionCount.get());
         log.info(greeting +" "+title+" "+name);
     }
 }

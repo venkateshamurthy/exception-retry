@@ -10,6 +10,7 @@ import io.github.resilience4j.ratelimiter.RateLimiter;
 import io.github.resilience4j.retry.Retry;
 import lombok.SneakyThrows;
 import lombok.experimental.ExtensionMethod;
+import lombok.experimental.UtilityClass;
 
 import java.util.function.*;
 
@@ -19,6 +20,7 @@ import static io.github.venkateshamurthy.exceptional.RxTry.rteMapper;
 /**
  * A convenient wrapper to {@link RxSupplier}
  */
+@UtilityClass
 @ExtensionMethod(RxTry.class)
 public class RxSupplier {
     /** A reflexive CheckedSupplier wrapper.*/
@@ -227,10 +229,10 @@ public class RxSupplier {
      * @param <R>  type of the result
      */
     public static <X extends Exception, X2 extends Exception, R>
-    CheckedSupplier<R> errorConsumedSupplier(
-            CheckedSupplier<R>    supplier,
-            Class<X>  ex,  Consumer<X> op,
-            Class<X2> ex2, Consumer<X2> op2){
+    CheckedSupplier<R> errorConsumedCheckedSupplier(
+            CheckedSupplier<R>  supplier,
+            Class<X>  ex,   Consumer<X> op,
+            Class<X2> ex2,  Consumer<X2> op2){
         return ()->supplier.tryWrap().consumeFailure(ex, op, ex2, op2).getOrElseThrow(ceMapper);
     }
 
@@ -247,7 +249,7 @@ public class RxSupplier {
      * @param <R>  type of the result
      */
     public static <X extends Exception, X2 extends Exception,X3 extends Exception, R>
-    CheckedSupplier<R> errorConsumedSupplier(
+    CheckedSupplier<R> errorConsumedCheckedSupplier(
             CheckedSupplier<R>    supplier,
             Class<X>  ex,  Consumer<X> op,
             Class<X2> ex2, Consumer<X2> op2,

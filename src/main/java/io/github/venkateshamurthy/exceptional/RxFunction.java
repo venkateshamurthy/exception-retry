@@ -13,8 +13,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
-import static io.github.venkateshamurthy.exceptional.RxSupplier.rxCheckedSupplier;
-import static io.github.venkateshamurthy.exceptional.RxSupplier.rxSupplier;
+import static io.github.venkateshamurthy.exceptional.RxSupplier.*;
 import static io.github.venkateshamurthy.exceptional.RxTry.ceMapper;
 import static io.github.venkateshamurthy.exceptional.RxTry.rteMapper;
 

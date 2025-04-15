@@ -185,7 +185,7 @@ class RateLimiterTest {
 
 
     @Test
-    void rateLimitFunction()  {
+    void testRateLimitFunction()  {
         Function<String, String> function = toFunction(service::returnHelloWorldWithName).rateLimitFunction(rl);
         given(rl.acquirePermission(1)).willReturn(false);
         Try<String> tryFunc = function.tryWrap("")
@@ -204,7 +204,7 @@ class RateLimiterTest {
     }
 
     @Test
-    void rateLimitBiFunction()  {
+    void testRateLimitBiFunction()  {
         BiFunction<String, String, String> function = toBiFunction(service::returnHelloWorldWithTitleName)
                 .rateLimitBiFunction(rl);
         given(rl.acquirePermission(1)).willReturn(false);
@@ -224,7 +224,7 @@ class RateLimiterTest {
     }
 
     @Test
-    void rateLimitCheckedFunction()  {
+    void testRateLimitCheckedFunction()  {
         CheckedFunction<String, String> function = toCheckedFunction(service::returnHelloWorldWithName)
                 .rateLimitCheckedFunction(rl);
         given(rl.acquirePermission(1)).willReturn(false);
@@ -244,7 +244,7 @@ class RateLimiterTest {
     }
 
     @Test
-    void rateLimitCheckedBiFunction()  {
+    void testRateLimitCheckedBiFunction()  {
         CheckedBiFunction<String, String, String> function = toCheckedBiFunction(service::returnHelloWorldWithTitleNameWithException)
                 .rateLimitCheckedBiFunction(rl);
         given(rl.acquirePermission(1)).willReturn(false);
@@ -264,7 +264,7 @@ class RateLimiterTest {
     }
 
     @Test
-    public void circuitBreakFunction() {
+    public void testCircuitBreakFunction() {
         Function<String, String> function = toFunction(service::returnHelloWorldWithName);
         CircuitBreaker circuitBreaker = spy(CircuitBreaker.of("Hello World", CircuitBreakerConfig.custom().build()));
         Function<String, String> decorated = function.circuitBreakFunction(circuitBreaker);
@@ -288,7 +288,7 @@ class RateLimiterTest {
     }
 
     @Test
-    public void circuitBreakBiFunction() {
+    public void testCircuitBreakBiFunction() {
         BiFunction<String, String, String> function = toBiFunction(service::returnHelloWorldWithTitleName);
         CircuitBreaker circuitBreaker = spy(CircuitBreaker.of("Hello World", CircuitBreakerConfig.custom().build()));
         BiFunction<String, String, String> decorated = function.circuitBreakBiFunction(circuitBreaker);
@@ -312,7 +312,7 @@ class RateLimiterTest {
     }
 
     @Test
-    public void circuitBreakCheckedFunction() {
+    public void testCircuitBreakCheckedFunction() {
         CheckedFunction<String, String> function = toCheckedFunction(service::returnHelloWorldWithNameWithException);
         CircuitBreaker circuitBreaker = spy(CircuitBreaker.of("Hello World", CircuitBreakerConfig.custom().build()));
         CheckedFunction<String, String> decorated = function.circuitBreakCheckedFunction(circuitBreaker);
@@ -336,7 +336,7 @@ class RateLimiterTest {
     }
 
     @Test
-    public void circuitBreakCheckedBiFunction() {
+    public void testCircuitBreakCheckedBiFunction() {
         CheckedBiFunction<String, String, String> function = toCheckedBiFunction(service::returnHelloWorldWithTitleNameWithException);
         CircuitBreaker circuitBreaker = spy(CircuitBreaker.of("Hello World", CircuitBreakerConfig.custom().build()));
         CheckedBiFunction<String, String, String> decorated = function.circuitBreakCheckedBiFunction(circuitBreaker);
