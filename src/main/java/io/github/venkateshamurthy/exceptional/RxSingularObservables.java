@@ -17,27 +17,99 @@ import lombok.experimental.UtilityClass;
  */
 @UtilityClass
 public class RxSingularObservables {
-    /** A {@link Retry} wrapper for the {@link Observable}.*/
-    public  <T> Observable<T> retry(Observable<T> observable, Retry retry){return observable.<T>compose(RetryTransformer.of(retry));}
+    /**
+     * A {@link Retry} wrappering {@link Observable}
+     *
+     * @param observable input
+     * @param retry      to be wrappering
+     * @param <T>        input type
+     * @return input wrappered
+     */
+    public <T> Observable<T> retry(Observable<T> observable, Retry retry) {
+        return observable.compose(RetryTransformer.of(retry));
+    }
 
-    /** A {@link Bulkhead} wrapper for the {@link Observable}.*/
-    public  <T> Observable<T> bulkhead(Observable<T> observable, Bulkhead bulkHead){return observable.<T>compose(BulkheadOperator.of(bulkHead));}
+    /**
+     * A {@link Bulkhead} wrappering {@link Observable}
+     *
+     * @param observable input
+     * @param bulkHead   to be wrappering
+     * @param <T>        input type
+     * @return input wrappered
+     */
+    public <T> Observable<T> bulkhead(Observable<T> observable, Bulkhead bulkHead) {
+        return observable.compose(BulkheadOperator.of(bulkHead));
+    }
 
-    /** A {@link CircuitBreaker} wrapper for the {@link Observable}.*/
-    public  <T> Observable<T> circuitBreak(Observable<T> observable, CircuitBreaker circuitBreaker){return observable.<T>compose(CircuitBreakerOperator.of(circuitBreaker));}
+    /**
+     * A {@link CircuitBreaker} wrappering {@link Observable}
+     *
+     * @param observable     input
+     * @param circuitBreaker to be wrappering
+     * @param <T>            input type
+     * @return input wrappered
+     */
+    public <T> Observable<T> circuitBreak(Observable<T> observable, CircuitBreaker circuitBreaker) {
+        return observable.compose(CircuitBreakerOperator.of(circuitBreaker));
+    }
 
-    /** A {@link RateLimiter} wrapper for the {@link Observable}.*/
-    public  <T> Observable<T> rateLimit(Observable<T> observable, RateLimiter rateLimiter){return observable.<T>compose(RateLimiterOperator.of(rateLimiter));}
+    /**
+     * A {@link RateLimiter} wrappering {@link Observable}
+     *
+     * @param observable  input
+     * @param rateLimiter to be wrappering
+     * @param <T>         input type
+     * @return input wrappered
+     */
+    public <T> Observable<T> rateLimit(Observable<T> observable, RateLimiter rateLimiter) {
+        return observable.compose(RateLimiterOperator.of(rateLimiter));
+    }
 
-    /** A {@link Retry} wrapper for the {@link Observable}.*/
-    public  <T> Single<T> retry(Single<T> single, Retry retry){return single.<T>compose(RetryTransformer.of(retry));}
+    /**
+     * A {@link Retry} wrappering {@link Single}
+     *
+     * @param single input
+     * @param retry  to be wrappering
+     * @param <T>    input type
+     * @return input wrappered
+     */
+    public <T> Single<T> retry(Single<T> single, Retry retry) {
+        return single.compose(RetryTransformer.of(retry));
+    }
 
-    /** A {@link Bulkhead} wrapper for the {@link Observable}.*/
-    public  <T> Single<T> bulkhead(Single<T> single, Bulkhead bulkHead){return single.<T>compose(BulkheadOperator.of(bulkHead));}
+    /**
+     * A {@link Bulkhead} wrappering {@link Single}
+     *
+     * @param single   input
+     * @param bulkHead to be wrappering
+     * @param <T>      input type
+     * @return input wrappered
+     */
+    public <T> Single<T> bulkhead(Single<T> single, Bulkhead bulkHead) {
+        return single.compose(BulkheadOperator.of(bulkHead));
+    }
 
-    /** A {@link CircuitBreaker} wrapper for the {@link Observable}.*/
-    public  <T> Single<T> circuitBreak(Single<T> single, CircuitBreaker circuitBreaker){return single.<T>compose(CircuitBreakerOperator.of(circuitBreaker));}
+    /**
+     * A {@link CircuitBreaker} wrappering {@link Single}
+     *
+     * @param single         input
+     * @param circuitBreaker to be wrappering
+     * @param <T>            input type
+     * @return input wrappered
+     */
+    public <T> Single<T> circuitBreak(Single<T> single, CircuitBreaker circuitBreaker) {
+        return single.compose(CircuitBreakerOperator.of(circuitBreaker));
+    }
 
-    /** A {@link RateLimiter} wrapper for the {@link Observable}.*/
-    public  <T> Single<T> rateLimit(Single<T> single, RateLimiter rateLimiter){return single.<T>compose(RateLimiterOperator.of(rateLimiter));}
+    /**
+     * A {@link RateLimiter} wrappering {@link Single}
+     *
+     * @param single      input
+     * @param rateLimiter to be wrappering
+     * @param <T>         input type
+     * @return input wrappered
+     */
+    public <T> Single<T> rateLimit(Single<T> single, RateLimiter rateLimiter) {
+        return single.compose(RateLimiterOperator.of(rateLimiter));
+    }
 }

@@ -9,7 +9,9 @@ import lombok.experimental.UtilityClass;
 
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import static io.github.venkateshamurthy.exceptional.RxSupplier.*;
+
+import static io.github.venkateshamurthy.exceptional.RxSupplier.rxCheckedSupplier;
+import static io.github.venkateshamurthy.exceptional.RxSupplier.rxSupplier;
 
 /**
  * A {@link Consumer} and {@link CheckedConsumer} wrappering utility.
@@ -18,9 +20,10 @@ import static io.github.venkateshamurthy.exceptional.RxSupplier.*;
 public class RxConsumer {
     /**
      * Reflexive function
+     *
      * @param consumer a {@link Consumer} to be returned as-is
+     * @param <T>      type of input
      * @return input as is
-     * @param <T> type of input
      */
     public <T> Consumer<T> toConsumer(final Consumer<T> consumer) {
         return consumer;
@@ -28,9 +31,10 @@ public class RxConsumer {
 
     /**
      * Reflexive function
+     *
      * @param consumer a {@link CheckedConsumer} to be returned as-is
+     * @param <T>      type of input
      * @return input as is
-     * @param <T> type of input
      */
     public <T> CheckedConsumer<T> toCheckedConsumer(CheckedConsumer<T> consumer) {
         return consumer;
@@ -38,10 +42,11 @@ public class RxConsumer {
 
     /**
      * Reflexive function
+     *
      * @param consumer an instance of {@link BiConsumer} to be returned as-is
+     * @param <T>      input
+     * @param <T2>     input
      * @return input as is
-     * @param <T> input
-     * @param <T2> input
      */
     public <T, T2> BiConsumer<T, T2> toBiConsumer(BiConsumer<T, T2> consumer) {
         return consumer;
@@ -49,10 +54,11 @@ public class RxConsumer {
 
     /**
      * Reflexive function
+     *
      * @param consumer an instance of {@link CheckedBiConsumer} to be returned as-is
+     * @param <T>      input
+     * @param <T2>     input
      * @return input as is
-     * @param <T> input
-     * @param <T2> input
      */
     public <T, T2> CheckedBiConsumer<T, T2> toCheckedBiConsumer(CheckedBiConsumer<T, T2> consumer) {
         return consumer;
@@ -111,7 +117,8 @@ public class RxConsumer {
      *
      * @param consumer to be wrapped
      * @param retry    to be applied
-     * @param <T>      type of iinput
+     * @param <T>      type of input
+     * @param <T2>     type of input
      * @return consumer wrapped
      */
     public <T, T2> BiConsumer<T, T2> retryBiConsumer(BiConsumer<T, T2> consumer, Retry retry) {
@@ -123,7 +130,8 @@ public class RxConsumer {
      *
      * @param consumer    to be wrapped
      * @param rateLimiter to be applied
-     * @param <T>         type of iinput
+     * @param <T>         type of input
+     * @param <T2>        type of input
      * @return consumer wrapped
      */
     public <T, T2> BiConsumer<T, T2> rateLimitBiConsumer(BiConsumer<T, T2> consumer, RateLimiter rateLimiter) {
@@ -135,7 +143,8 @@ public class RxConsumer {
      *
      * @param consumer       to be wrapped
      * @param circuitBreaker to be applied
-     * @param <T>            type of iinput
+     * @param <T>            type of input
+     * @param <T2>           type of input
      * @return consumer wrapped
      */
     public <T, T2> BiConsumer<T, T2> circuitBreakBiConsumer(BiConsumer<T, T2> consumer, CircuitBreaker circuitBreaker) {
@@ -147,7 +156,8 @@ public class RxConsumer {
      *
      * @param consumer to be wrapped
      * @param bulkhead to be applied
-     * @param <T>      type of iinput
+     * @param <T>      type of input
+     * @param <T2>     type of input
      * @return consumer wrapped
      */
     public <T, T2> BiConsumer<T, T2> bulkheadBiConsumer(BiConsumer<T, T2> consumer, Bulkhead bulkhead) {
@@ -207,7 +217,8 @@ public class RxConsumer {
      *
      * @param checkedBiConsumer to be wrapped
      * @param retry             to be applied
-     * @param <T>               type of iinput
+     * @param <T>               type of input
+     * @param <T2>              type of input
      * @return consumer wrapped
      */
     public <T, T2> CheckedBiConsumer<T, T2> retryCheckedBiConsumer(CheckedBiConsumer<T, T2> checkedBiConsumer, Retry retry) {
@@ -219,7 +230,8 @@ public class RxConsumer {
      *
      * @param checkedBiConsumer to be wrapped
      * @param rateLimiter       to be applied
-     * @param <T>               type of iinput
+     * @param <T>               type of input
+     * @param <T2>              type of input
      * @return consumer wrapped
      */
     public <T, T2> CheckedBiConsumer<T, T2> rateLimitCheckedBiConsumer(CheckedBiConsumer<T, T2> checkedBiConsumer, RateLimiter rateLimiter) {
@@ -231,7 +243,8 @@ public class RxConsumer {
      *
      * @param checkedBiConsumer to be wrapped
      * @param circuitBreaker    to be applied
-     * @param <T>               type of iinput
+     * @param <T>               type of input
+     * @param <T2>              type of input
      * @return consumer wrapped
      */
     public <T, T2> CheckedBiConsumer<T, T2> circuitBreakCheckedBiConsumer(CheckedBiConsumer<T, T2> checkedBiConsumer, CircuitBreaker circuitBreaker) {
@@ -243,7 +256,8 @@ public class RxConsumer {
      *
      * @param checkedBiConsumer to be wrapped
      * @param bulkhead          to be applied
-     * @param <T>               type of iinput
+     * @param <T>               type of input
+     * @param <T2>              type of input
      * @return consumer wrapped
      */
     public <T, T2> CheckedBiConsumer<T, T2> bulkheadCheckedBiConsumer(CheckedBiConsumer<T, T2> checkedBiConsumer, Bulkhead bulkhead) {

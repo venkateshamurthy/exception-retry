@@ -19,18 +19,18 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import javax.naming.TimeLimitExceededException;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.rmi.AccessException;
 import java.rmi.RemoteException;
 import java.sql.SQLTimeoutException;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.function.Supplier;
-import java.util.function.UnaryOperator;
+import java.util.function.*;
 
 import static io.github.venkateshamurthy.exceptional.Delayer.FIBONACCI;
 import static io.github.venkateshamurthy.exceptional.RxFunction.*;
+import static java.math.BigInteger.ONE;
+import static java.math.BigInteger.TWO;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.then;
@@ -67,6 +67,17 @@ class RxFunctionTest {
         greeting = "greeting";
         clearAllCaches();
         helloWorldService = mock(HelloWorldService.class);
+    }
+
+    @Test
+    void testUnaryBinaryConversions() {
+        ArrayIndexOutOfBoundsException aioob = new ArrayIndexOutOfBoundsException();
+        Exception exception = new Exception(aioob);
+        assertEquals(Integer.bitCount(10), toUnaryOperator(Integer::bitCount).apply(10));
+        assertEquals(Integer.sum(10,20), toBinaryOperator(Integer::sum).apply(10,20));
+        assertEquals(exception, toUnaryOperator(e->e).apply(exception));
+        assertEquals(exception.getCause(), toUnaryOperator(Throwable::getCause).apply(exception));
+        assertEquals(TWO, toBinaryOperator(BigInteger::add).apply(ONE, ONE));
     }
 
     @ParameterizedTest
