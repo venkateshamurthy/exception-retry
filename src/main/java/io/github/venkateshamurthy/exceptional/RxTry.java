@@ -11,7 +11,7 @@ import lombok.experimental.UtilityClass;
 import java.util.concurrent.Callable;
 import java.util.function.*;
 
-import static io.github.venkateshamurthy.exceptional.RxSupplier.rxCheckedSupplier;
+import static io.github.venkateshamurthy.exceptional.RxSupplier.toCheckedSupplier;
 import static io.vavr.API.$;
 import static io.vavr.Predicates.instanceOf;
 import static org.apache.commons.lang3.exception.ExceptionUtils.throwableOfType;
@@ -183,7 +183,7 @@ public class RxTry {
      * @return Try
      */
     public <T, T2, R> Try<R> tryWrap(CheckedBiFunction<T, T2, R> checkedBiFunction, T t, T2 t2) {
-        return Try.of(rxCheckedSupplier(checkedBiFunction, t, t2)::get);
+        return Try.of(RxSupplier.toCheckedSupplier(checkedBiFunction, t, t2)::get);
     }
 
     /**
@@ -198,7 +198,7 @@ public class RxTry {
      * @return Try
      */
     public <T, T2, R> Try<R> tryWrap(BiFunction<T, T2, R> biFunction, T t, T2 t2) {
-        return Try.of(RxSupplier.rxSupplier(biFunction, t, t2)::get);
+        return Try.of(RxSupplier.toSupplier(biFunction, t, t2)::get);
     }
 
     /**
@@ -211,7 +211,7 @@ public class RxTry {
      * @return Try
      */
     public <T, R> Try<R> tryWrap(CheckedFunction<T, R> checkedFunction, T t) {
-        return Try.of(RxSupplier.rxCheckedSupplier(checkedFunction, t)::get);
+        return Try.of(RxSupplier.toCheckedSupplier(checkedFunction, t)::get);
     }
 
     /**
@@ -224,7 +224,7 @@ public class RxTry {
      * @return Try
      */
     public <T, R> Try<R> tryWrap(Function<T, R> function, T t) {
-        return Try.of(RxSupplier.rxSupplier(function, t)::get);
+        return Try.of(RxSupplier.toSupplier(function, t)::get);
     }
 
     /**

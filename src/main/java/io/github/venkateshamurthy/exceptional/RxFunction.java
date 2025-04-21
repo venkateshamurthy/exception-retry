@@ -6,13 +6,14 @@ import io.github.resilience4j.core.functions.CheckedBiFunction;
 import io.github.resilience4j.core.functions.CheckedFunction;
 import io.github.resilience4j.ratelimiter.RateLimiter;
 import io.github.resilience4j.retry.Retry;
+import lombok.NoArgsConstructor;
 import lombok.experimental.ExtensionMethod;
 import lombok.experimental.UtilityClass;
 
 import java.util.function.*;
 
-import static io.github.venkateshamurthy.exceptional.RxSupplier.rxCheckedSupplier;
-import static io.github.venkateshamurthy.exceptional.RxSupplier.rxSupplier;
+import static io.github.venkateshamurthy.exceptional.RxSupplier.toCheckedSupplier;
+import static io.github.venkateshamurthy.exceptional.RxSupplier.toSupplier;
 import static io.github.venkateshamurthy.exceptional.RxTry.ceMapper;
 import static io.github.venkateshamurthy.exceptional.RxTry.rteMapper;
 
@@ -21,6 +22,7 @@ import static io.github.venkateshamurthy.exceptional.RxTry.rteMapper;
  */
 @UtilityClass
 @ExtensionMethod(RxTry.class)
+@SuppressWarnings("javadoc")
 public class RxFunction {
     /**
      * A reflexive function for {@link BinaryOperator}
@@ -227,7 +229,7 @@ public class RxFunction {
      * @return wrapped biFunction
      */
     public static <T, T2, R> BiFunction<T, T2, R> retryBiFunction(BiFunction<T, T2, R> biFunction, Retry retry) {
-        return (T t, T2 t2) -> Retry.decorateSupplier(retry, rxSupplier(biFunction, t, t2)).get();
+        return (T t, T2 t2) -> Retry.decorateSupplier(retry, RxSupplier.toSupplier(biFunction, t, t2)).get();
     }
 
     /**
@@ -241,7 +243,7 @@ public class RxFunction {
      * @return wrapped biFunction
      */
     public static <T, T2, R> BiFunction<T, T2, R> rateLimitBiFunction(BiFunction<T, T2, R> biFunction, RateLimiter rateLimiter) {
-        return (T t, T2 t2) -> RateLimiter.decorateSupplier(rateLimiter, rxSupplier(biFunction, t, t2)).get();
+        return (T t, T2 t2) -> RateLimiter.decorateSupplier(rateLimiter, RxSupplier.toSupplier(biFunction, t, t2)).get();
     }
 
     /**
@@ -255,7 +257,7 @@ public class RxFunction {
      * @return wrapped biFunction
      */
     public static <T, T2, R> BiFunction<T, T2, R> circuitBreakBiFunction(BiFunction<T, T2, R> biFunction, CircuitBreaker circuitBreaker) {
-        return (T t, T2 t2) -> CircuitBreaker.decorateSupplier(circuitBreaker, rxSupplier(biFunction, t, t2)).get();
+        return (T t, T2 t2) -> CircuitBreaker.decorateSupplier(circuitBreaker, RxSupplier.toSupplier(biFunction, t, t2)).get();
     }
 
     /**
@@ -269,7 +271,7 @@ public class RxFunction {
      * @return wrapped biFunction
      */
     public static <T, T2, R> BiFunction<T, T2, R> bulkheadBiFunction(BiFunction<T, T2, R> biFunction, Bulkhead bulkhead) {
-        return (T t, T2 t2) -> Bulkhead.decorateSupplier(bulkhead, rxSupplier(biFunction, t, t2)).get();
+        return (T t, T2 t2) -> Bulkhead.decorateSupplier(bulkhead, RxSupplier.toSupplier(biFunction, t, t2)).get();
     }
 
     /**
@@ -283,7 +285,7 @@ public class RxFunction {
      * @return wrapped checkedBiFunction
      */
     public static <T, T2, R> CheckedBiFunction<T, T2, R> retryCheckedBiFunction(CheckedBiFunction<T, T2, R> checkedBiFunction, Retry retry) {
-        return (T t, T2 t2) -> Retry.decorateCheckedSupplier(retry, rxCheckedSupplier(checkedBiFunction, t, t2)).get();
+        return (T t, T2 t2) -> Retry.decorateCheckedSupplier(retry, RxSupplier.toCheckedSupplier(checkedBiFunction, t, t2)).get();
     }
 
     /**
@@ -297,7 +299,7 @@ public class RxFunction {
      * @return wrapped checkedBiFunction
      */
     public static <T, T2, R> CheckedBiFunction<T, T2, R> rateLimitCheckedBiFunction(CheckedBiFunction<T, T2, R> checkedBiFunction, RateLimiter rateLimiter) {
-        return (T t, T2 t2) -> RateLimiter.decorateCheckedSupplier(rateLimiter, rxCheckedSupplier(checkedBiFunction, t, t2)).get();
+        return (T t, T2 t2) -> RateLimiter.decorateCheckedSupplier(rateLimiter, RxSupplier.toCheckedSupplier(checkedBiFunction, t, t2)).get();
     }
 
     /**
@@ -311,7 +313,7 @@ public class RxFunction {
      * @return wrapped checkedBiFunction
      */
     public static <T, T2, R> CheckedBiFunction<T, T2, R> circuitBreakCheckedBiFunction(CheckedBiFunction<T, T2, R> checkedBiFunction, CircuitBreaker circuitBreaker) {
-        return (T t, T2 t2) -> CircuitBreaker.decorateCheckedSupplier(circuitBreaker, rxCheckedSupplier(checkedBiFunction, t, t2)).get();
+        return (T t, T2 t2) -> CircuitBreaker.decorateCheckedSupplier(circuitBreaker, RxSupplier.toCheckedSupplier(checkedBiFunction, t, t2)).get();
     }
 
     /**
@@ -325,7 +327,7 @@ public class RxFunction {
      * @return wrapped checkedBiFunction
      */
     public static <T, T2, R> CheckedBiFunction<T, T2, R> bulkheadCheckedBiFunction(CheckedBiFunction<T, T2, R> checkedBiFunction, Bulkhead bulkhead) {
-        return (T t, T2 t2) -> Bulkhead.decorateCheckedSupplier(bulkhead, rxCheckedSupplier(checkedBiFunction, t, t2)).get();
+        return (T t, T2 t2) -> Bulkhead.decorateCheckedSupplier(bulkhead, RxSupplier.toCheckedSupplier(checkedBiFunction, t, t2)).get();
     }
 
     /**
@@ -409,6 +411,7 @@ public class RxFunction {
      * @param op3      transforming {@link UnaryOperator} to transforming the ex to another exception
      * @param <X>      Ist type of exception to be mapped
      * @param <X2>     2nd type of exception to be mapped
+     * @param <X3>     3rd type of exception to be mapped
      * @param <T>      type of input
      * @param <R>      type of the result
      * @return function wrapped
@@ -472,7 +475,9 @@ public class RxFunction {
      * @param ex                a {@code Class<Exception>} encountered by the callable
      * @param op                transforming {@link UnaryOperator} to transforming the ex to another exception
      * @param ex2               a {@code Class<Exception>} encountered by the callable
-     * @param op2               transforming {@link UnaryOperator} to transforming the ex to another exceotion
+     * @param op2               transforming {@link UnaryOperator} to transforming the ex to another exception
+     * @param ex3               a {@code Class<Exception>} encountered by the callable
+     * @param op3               transforming {@link UnaryOperator} to transforming the ex to another exception
      * @param <X>               Ist type of exception to be mapped
      * @param <X2>              2nd type of exception to be mapped
      * @param <X3>              3rd type of exception to be mapped
@@ -506,7 +511,7 @@ public class RxFunction {
      * @param <R>               type of the result
      * @return checkedBiFunction wrapped
      */
-    public static <X extends Exception, X2 extends Exception, X3 extends Exception, T, T2, R>
+    public static <X extends Exception, X2 extends Exception, T, T2, R>
     CheckedBiFunction<T, T2, R> errorMappedCheckedBiFunction(
             CheckedBiFunction<T, T2, R> checkedBiFunction,
             Class<X>  ex,  UnaryOperator<Exception> op,
@@ -527,7 +532,7 @@ public class RxFunction {
      * @param <R>               type of the result
      * @return checkedBiFunction wrapped
      */
-    public static <X extends Exception, X2 extends Exception, X3 extends Exception, T, T2, R>
+    public static <X extends Exception, T, T2, R>
     CheckedBiFunction<T, T2, R> errorMappedCheckedBiFunction(
             CheckedBiFunction<T, T2, R> checkedBiFunction,
             Class<X> ex, UnaryOperator<Exception> op) {
@@ -824,6 +829,7 @@ public class RxFunction {
      * @param <X2>              2nd type of exception to be consumed
      * @param <X3>              3rd type of exception to be consumed
      * @param <T>               type of the input
+     * @param <T2>              type of 2nd input
      * @param <R>               type of the result
      * @return checkedBiFunction wrapped
      */

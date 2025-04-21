@@ -2,7 +2,6 @@ package io.github.venkateshamurthy.exceptional;
 
 import io.github.resilience4j.bulkhead.Bulkhead;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
-import io.github.resilience4j.core.functions.CheckedBiFunction;
 import io.github.resilience4j.core.functions.CheckedRunnable;
 import io.github.resilience4j.ratelimiter.RateLimiter;
 import io.github.resilience4j.ratelimiter.RequestNotPermitted;
@@ -25,13 +24,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
 import static io.github.venkateshamurthy.exceptional.Delayer.FIBONACCI;
-import static io.github.venkateshamurthy.exceptional.RxFunction.toCheckedBiFunction;
 import static io.github.venkateshamurthy.exceptional.RxRunnable.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.*;
 
 @Slf4j
@@ -53,7 +48,7 @@ class RxRunnableTest {
         rt = Retry.of("rt", RetryConfig.custom()
                 .maxAttempts(retryMaxAttempts)
                 .failAfterMaxAttempts(true)
-                .intervalFunction(FIBONACCI.millis(10,1200))
+                .intervalFunction(FIBONACCI.millis(10,120))
                 .retryExceptions(Exception.class,
                         TimeoutException.class,
                         NullPointerException.class,

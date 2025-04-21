@@ -9,7 +9,7 @@
     <fileSets>
         <fileSet>
             <directory>${project.build.directory}</directory>
-            <outputDirectory>io/github/venkateshamurthy/exception-retry/1.0</outputDirectory>
+            <outputDirectory>io/github/venkateshamurthy/exception-retry/${project.version}</outputDirectory>
             <includes>
                 <include>*.jar</include>
                 <include>*.jar.asc</include>

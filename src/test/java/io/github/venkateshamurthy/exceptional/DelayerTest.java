@@ -40,7 +40,7 @@ class DelayerTest {
     RetryConfig.Builder retryCfgBuilder = RetryConfig.custom()
             .maxAttempts(retryMaxAttempts)
             .failAfterMaxAttempts(true)
-            .intervalFunction(FIBONACCI.millis(10,1200))
+            .intervalFunction(FIBONACCI.millis(1,300))
             .retryExceptions(Exception.class, TimeoutException.class);
 
     @BeforeEach
@@ -48,7 +48,7 @@ class DelayerTest {
         i = new AtomicInteger();
         bh = Bulkhead.ofDefaults("bh");
         rt = Retry.of("rt", retryCfgBuilder.intervalFunction(
-                FIBONACCI.millis(10,1200))
+                FIBONACCI.millis(1,300))
                 .build());
         cb = CircuitBreaker.ofDefaults("cb");
         rl = RateLimiter.ofDefaults("rl");
@@ -66,12 +66,12 @@ class DelayerTest {
 
     @ParameterizedTest( name = "Running {0} with initial:{1}, max:{2} and unit:{3}")
     @ArgumentsSource(DelayArgSource.class)
-    void testRetryAllDurations(Delayer delayer, Number inital, Number maxDelay, TimeUnit unit) throws Exception {
+    void testRetryAllDurations(Delayer delayer, Number initial, Number maxDelay, TimeUnit unit) throws Exception {
         final IntervalFunction interval = switch (unit) {
-            case MILLISECONDS-> delayer.millis(inital.longValue(),maxDelay.longValue());
-            case SECONDS     -> delayer.seconds(inital.longValue(),maxDelay.longValue());
-            case MINUTES     -> delayer.minutes(inital.doubleValue(),maxDelay.doubleValue());
-            case HOURS       -> delayer.hours(inital.doubleValue(),maxDelay.doubleValue());
+            case MILLISECONDS-> delayer.millis (initial.longValue(),  maxDelay.longValue());
+            case SECONDS     -> delayer.seconds(initial.longValue(),  maxDelay.longValue());
+            case MINUTES     -> delayer.minutes(initial.doubleValue(),maxDelay.doubleValue());
+            case HOURS       -> delayer.hours  (initial.doubleValue(),maxDelay.doubleValue());
             default -> throw new IllegalStateException("Unexpected time unit:: " + unit);
         };
         rt = Retry.of("rt", retryCfgBuilder.intervalFunction(interval).build());
@@ -89,40 +89,40 @@ class DelayerTest {
         @Override
         public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) {
             return Stream.of(
-                    arguments(FIBONACCI, 10L, 1200L, MILLISECONDS),//millis
-                    arguments(FIBONACCI, 1L, 120, SECONDS), //seconds
-                    arguments(FIBONACCI, 0.01, 0.03, MINUTES), //mins
-                    arguments(FIBONACCI, 0.0001, 0.001, HOURS),//hours
+                    arguments(FIBONACCI,          1,      120,   MILLISECONDS),//millis
+                    arguments(FIBONACCI,          1L,     3,     SECONDS), //seconds
+                    arguments(FIBONACCI,          0.01,   0.02,  MINUTES), //mins
+                    arguments(FIBONACCI,          0.0001, 0.0005,HOURS),//hours
 
-                    arguments(EXPONENTIAL, 10L, 1200L, MILLISECONDS),//millis
-                    arguments(EXPONENTIAL, 1L, 120, SECONDS), //seconds
-                    arguments(EXPONENTIAL, 0.01, 0.03, MINUTES), //mins
-                    arguments(EXPONENTIAL, 0.0001, 0.001, HOURS),//hours
+                    arguments(EXPONENTIAL,        1L,     120,   MILLISECONDS),//millis
+                    arguments(EXPONENTIAL,        1,      3,     SECONDS), //seconds
+                    arguments(EXPONENTIAL,        0.01,   0.02,  MINUTES), //mins
+                    arguments(EXPONENTIAL,        0.0001, 0.0005,HOURS),//hours
 
-                    arguments(EXPONENTIAL_JITTER, 10L, 1200L, MILLISECONDS),//millis
-                    arguments(EXPONENTIAL_JITTER, 1L, 120, SECONDS), //seconds
-                    arguments(EXPONENTIAL_JITTER, 0.01, 0.03, MINUTES), //mins
-                    arguments(EXPONENTIAL_JITTER, 0.0001, 0.001, HOURS),//hours
+                    arguments(EXPONENTIAL_JITTER, 1,      120,   MILLISECONDS),//millis
+                    arguments(EXPONENTIAL_JITTER, 1L,     3,     SECONDS), //seconds
+                    arguments(EXPONENTIAL_JITTER, 0.01,   0.02,  MINUTES), //mins
+                    arguments(EXPONENTIAL_JITTER, 0.0001, 0.0005,HOURS),//hours
 
-                    arguments(LINEAR, 10L, 1200L, MILLISECONDS),//millis
-                    arguments(LINEAR, 1L, 120, SECONDS), //seconds
-                    arguments(LINEAR, 0.01, 0.03, MINUTES), //mins
-                    arguments(LINEAR, 0.0001, 0.001, HOURS),//hours
+                    arguments(LINEAR,             1,      120,   MILLISECONDS),//millis
+                    arguments(LINEAR,             1L,     3,     SECONDS), //seconds
+                    arguments(LINEAR,             0.01,   0.02,  MINUTES), //mins
+                    arguments(LINEAR,             0.0001, 0.0005,HOURS),//hours
 
-                    arguments(DEFAULT, 10L, 1200L, MILLISECONDS),//millis
-                    arguments(DEFAULT, 1L, 120, SECONDS), //seconds
-                    arguments(DEFAULT, 0.01,0.03, MINUTES), //mins
-                    arguments(DEFAULT, 0.0001, 0.001, HOURS),//hours
+                    arguments(DEFAULT,            1,      120,   MILLISECONDS),//millis
+                    arguments(DEFAULT,            1L,     3,     SECONDS), //seconds
+                    arguments(DEFAULT,            0.01,   0.02,  MINUTES), //mins
+                    arguments(DEFAULT,            0.0001, 0.0005,HOURS),//hours
 
-                    arguments(DEFAULT_JITTER, 10L, 1200L, MILLISECONDS),//millis
-                    arguments(DEFAULT_JITTER, 1L, 10, SECONDS), //seconds
-                    arguments(DEFAULT_JITTER, 0.01, 0.03, MINUTES), //mins
-                    arguments(DEFAULT_JITTER, 0.0001,0.001, HOURS),//hours
+                    arguments(DEFAULT_JITTER,     1,      120,   MILLISECONDS),//millis
+                    arguments(DEFAULT_JITTER,     1,      2,     SECONDS), //seconds
+                    arguments(DEFAULT_JITTER,     0.01,   0.02,  MINUTES), //mins
+                    arguments(DEFAULT_JITTER,     0.0001, 0.0005,HOURS),//hours
 
-                    arguments(LINEAR_JITTER, 10L, 1200L, MILLISECONDS),//millis
-                    arguments(LINEAR_JITTER, 1L,  10, SECONDS), //seconds
-                    arguments(LINEAR_JITTER, 0.01, 0.03, MINUTES), //mins
-                    arguments(LINEAR_JITTER, 0.0001, 0.001, HOURS)//hours
+                    arguments(LINEAR_JITTER,      1,      120,   MILLISECONDS),//millis
+                    arguments(LINEAR_JITTER,      1L,     2,     SECONDS), //seconds
+                    arguments(LINEAR_JITTER,      0.01,   0.02,  MINUTES), //mins
+                    arguments(LINEAR_JITTER,      0.0001, 0.0005,HOURS)//hours
             );
         }
     }

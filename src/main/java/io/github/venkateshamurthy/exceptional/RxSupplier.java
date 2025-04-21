@@ -151,7 +151,7 @@ public class RxSupplier {
      * @param <T>      type of consumer
      * @return Supplier wrapped consumer
      */
-    public static <T> Supplier<Void> rxSupplier(Consumer<T> consumer, T t) {
+    public static <T> Supplier<Void> toSupplier(Consumer<T> consumer, T t) {
         return () -> {
             consumer.accept(t);
             return null;
@@ -168,7 +168,7 @@ public class RxSupplier {
      * @param <T2>       type of result
      * @return Supplier wrapped input
      */
-    public static <T, T2> Supplier<Void> rxSupplier(BiConsumer<T, T2> biConsumer, T t, T2 t2) {
+    public static <T, T2> Supplier<Void> toSupplier(BiConsumer<T, T2> biConsumer, T t, T2 t2) {
         return () -> {
             biConsumer.accept(t, t2);
             return null;
@@ -186,7 +186,7 @@ public class RxSupplier {
      * @param <R>        type of result
      * @return Supplier wrapped input
      */
-    public static <T, T2, R> Supplier<R> rxSupplier(BiFunction<T, T2, R> biFunction, T t, T2 t2) {
+    public static <T, T2, R> Supplier<R> toSupplier(BiFunction<T, T2, R> biFunction, T t, T2 t2) {
         return () -> biFunction.apply(t, t2);
     }
 
@@ -198,7 +198,7 @@ public class RxSupplier {
      * @param <R> type of result
      * @return Supplier wrapped input
      */
-    public static <T, R> Supplier<R> rxSupplier(Function<T, R> f, T t) {
+    public static <T, R> Supplier<R> toSupplier(Function<T, R> f, T t) {
         return () -> f.apply(t);
     }
 
@@ -210,7 +210,7 @@ public class RxSupplier {
      * @param <T>      type of input to consumer
      * @return CheckedSupplier wrapped input
      */
-    public static <T> CheckedSupplier<Void> rxCheckedSupplier(CheckedConsumer<T> consumer, T t) {
+    public static <T> CheckedSupplier<Void> toCheckedSupplier(CheckedConsumer<T> consumer, T t) {
         return () -> {
             consumer.accept(t);
             return null;
@@ -227,7 +227,7 @@ public class RxSupplier {
      * @param <T2>              type of input
      * @return CheckedSupplier wrapped input
      */
-    public static <T, T2> CheckedSupplier<Void> rxCheckedSupplier(CheckedBiConsumer<T, T2> checkedBiConsumer, T t, T2 t2) {
+    public static <T, T2> CheckedSupplier<Void> toCheckedSupplier(CheckedBiConsumer<T, T2> checkedBiConsumer, T t, T2 t2) {
         return () -> {
             checkedBiConsumer.accept(t, t2);
             return null;
@@ -245,7 +245,7 @@ public class RxSupplier {
      * @param <R>               type of result
      * @return CheckedSupplier wrapped input
      */
-    public static <T, T2, R> CheckedSupplier<R> rxCheckedSupplier(CheckedBiFunction<T, T2, R> checkedBiFunction, T t, T2 t2) {
+    public static <T, T2, R> CheckedSupplier<R> toCheckedSupplier(CheckedBiFunction<T, T2, R> checkedBiFunction, T t, T2 t2) {
         return () -> checkedBiFunction.apply(t, t2);
     }
 
@@ -258,7 +258,7 @@ public class RxSupplier {
      * @param <R> type of result
      * @return CheckedSupplier wrapped input
      */
-    public static <T, R> CheckedSupplier<R> rxCheckedSupplier(CheckedFunction<T, R> checkedFunction, T t) {
+    public static <T, R> CheckedSupplier<R> toCheckedSupplier(CheckedFunction<T, R> checkedFunction, T t) {
         return () -> checkedFunction.apply(t);
     }
 

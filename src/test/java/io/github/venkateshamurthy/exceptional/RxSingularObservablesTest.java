@@ -53,7 +53,7 @@ class RxSingularObservablesTest {
         rt = Retry.of("rt", RetryConfig.custom()
                 .maxAttempts(50)
                 .failAfterMaxAttempts(true)
-                .intervalFunction(FIBONACCI.millis(10,1200))
+                .intervalFunction(FIBONACCI.millis(10,120))
                 .retryExceptions(TimeoutException.class)
                 .build());
         cb = CircuitBreaker.ofDefaults("cb");

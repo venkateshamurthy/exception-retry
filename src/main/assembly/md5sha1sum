@@ -1,8 +1,27 @@
 #!/bin/bash
-cd target
-list=`ls exception-retry-1.0*`
+if ! command -v md5sum &> /dev/null; then
+  echo  "\"md5sum\" is not found in the path and is required. Please ensure to install the same"
+  exit 127
+fi
+if ! command -v sha1sum &> /dev/null; then
+  echo  "\"sha1sum\" is not found in the path and is required. Please ensure to install the same"
+  exit 127
+fi
+if ! [ -d "$1" ]; then
+    echo  "\"$1\" is absent. Looks like you have not build the project. Please run \"mvn clean install\""
+    exit 1
+fi
+cd $1
+# list all the binaries to be zipped.
+# make sure you have md5sum and sha1sum executables in your path
+list=`ls $2`
+if [ -z "$list" ]; then
+  echo "No artifacts matching \"$2\" found for check-summing. Did you forget to run \"mvn clean install\"?"
+  exit 1;
+fi
 for entry in $list; do
    md5sum  $entry | cut -d ' ' -f 1 > $entry.md5;
    sha1sum $entry | cut -d ' ' -f 1 > $entry.sha1;
 done
+echo "Successfully check summing completed"
 cd ../

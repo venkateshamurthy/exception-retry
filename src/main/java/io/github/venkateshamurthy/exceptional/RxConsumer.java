@@ -10,8 +10,8 @@ import lombok.experimental.UtilityClass;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-import static io.github.venkateshamurthy.exceptional.RxSupplier.rxCheckedSupplier;
-import static io.github.venkateshamurthy.exceptional.RxSupplier.rxSupplier;
+import static io.github.venkateshamurthy.exceptional.RxSupplier.toCheckedSupplier;
+import static io.github.venkateshamurthy.exceptional.RxSupplier.toSupplier;
 
 /**
  * A {@link Consumer} and {@link CheckedConsumer} wrappering utility.
@@ -73,7 +73,7 @@ public class RxConsumer {
      * @return consumer to be wrapped
      */
     public <T> Consumer<T> retryConsumer(Consumer<T> consumer, Retry retry) {
-        return r -> Retry.decorateSupplier(retry, rxSupplier(consumer, r)).get();
+        return r -> Retry.decorateSupplier(retry, RxSupplier.toSupplier(consumer, r)).get();
     }
 
     /**
@@ -122,7 +122,7 @@ public class RxConsumer {
      * @return consumer wrapped
      */
     public <T, T2> BiConsumer<T, T2> retryBiConsumer(BiConsumer<T, T2> consumer, Retry retry) {
-        return (T t, T2 t2) -> Retry.decorateSupplier(retry, rxSupplier(consumer, t, t2)).get();
+        return (T t, T2 t2) -> Retry.decorateSupplier(retry, RxSupplier.toSupplier(consumer, t, t2)).get();
     }
 
     /**
@@ -135,7 +135,7 @@ public class RxConsumer {
      * @return consumer wrapped
      */
     public <T, T2> BiConsumer<T, T2> rateLimitBiConsumer(BiConsumer<T, T2> consumer, RateLimiter rateLimiter) {
-        return (T t, T2 t2) -> RateLimiter.decorateSupplier(rateLimiter, rxSupplier(consumer, t, t2)).get();
+        return (T t, T2 t2) -> RateLimiter.decorateSupplier(rateLimiter, RxSupplier.toSupplier(consumer, t, t2)).get();
     }
 
     /**
@@ -148,7 +148,7 @@ public class RxConsumer {
      * @return consumer wrapped
      */
     public <T, T2> BiConsumer<T, T2> circuitBreakBiConsumer(BiConsumer<T, T2> consumer, CircuitBreaker circuitBreaker) {
-        return (T t, T2 t2) -> CircuitBreaker.decorateSupplier(circuitBreaker, rxSupplier(consumer, t, t2)).get();
+        return (T t, T2 t2) -> CircuitBreaker.decorateSupplier(circuitBreaker, RxSupplier.toSupplier(consumer, t, t2)).get();
     }
 
     /**
@@ -161,7 +161,7 @@ public class RxConsumer {
      * @return consumer wrapped
      */
     public <T, T2> BiConsumer<T, T2> bulkheadBiConsumer(BiConsumer<T, T2> consumer, Bulkhead bulkhead) {
-        return (T t, T2 t2) -> Bulkhead.decorateSupplier(bulkhead, rxSupplier(consumer, t, t2)).get();
+        return (T t, T2 t2) -> Bulkhead.decorateSupplier(bulkhead, RxSupplier.toSupplier(consumer, t, t2)).get();
     }
 
     /**
@@ -173,7 +173,7 @@ public class RxConsumer {
      * @return consumer wrapped
      */
     public <T> CheckedConsumer<T> retryCheckedConsumer(CheckedConsumer<T> checkedConsumer, Retry retry) {
-        return (T t) -> Retry.decorateCheckedSupplier(retry, rxCheckedSupplier(checkedConsumer, t)).get();
+        return (T t) -> Retry.decorateCheckedSupplier(retry, RxSupplier.toCheckedSupplier(checkedConsumer, t)).get();
     }
 
     /**
@@ -185,7 +185,7 @@ public class RxConsumer {
      * @return consumer wrapped
      */
     public <T> CheckedConsumer<T> rateLimitCheckedConsumer(CheckedConsumer<T> checkedConsumer, RateLimiter rateLimiter) {
-        return (T t) -> RateLimiter.decorateCheckedSupplier(rateLimiter, rxCheckedSupplier(checkedConsumer, t)).get();
+        return (T t) -> RateLimiter.decorateCheckedSupplier(rateLimiter, RxSupplier.toCheckedSupplier(checkedConsumer, t)).get();
     }
 
     /**
@@ -222,7 +222,7 @@ public class RxConsumer {
      * @return consumer wrapped
      */
     public <T, T2> CheckedBiConsumer<T, T2> retryCheckedBiConsumer(CheckedBiConsumer<T, T2> checkedBiConsumer, Retry retry) {
-        return (T t, T2 t2) -> Retry.decorateCheckedSupplier(retry, rxCheckedSupplier(checkedBiConsumer, t, t2)).get();
+        return (T t, T2 t2) -> Retry.decorateCheckedSupplier(retry, RxSupplier.toCheckedSupplier(checkedBiConsumer, t, t2)).get();
     }
 
     /**
@@ -235,7 +235,7 @@ public class RxConsumer {
      * @return consumer wrapped
      */
     public <T, T2> CheckedBiConsumer<T, T2> rateLimitCheckedBiConsumer(CheckedBiConsumer<T, T2> checkedBiConsumer, RateLimiter rateLimiter) {
-        return (T t, T2 t2) -> RateLimiter.decorateCheckedSupplier(rateLimiter, rxCheckedSupplier(checkedBiConsumer, t, t2)).get();
+        return (T t, T2 t2) -> RateLimiter.decorateCheckedSupplier(rateLimiter, RxSupplier.toCheckedSupplier(checkedBiConsumer, t, t2)).get();
     }
 
     /**
@@ -248,7 +248,7 @@ public class RxConsumer {
      * @return consumer wrapped
      */
     public <T, T2> CheckedBiConsumer<T, T2> circuitBreakCheckedBiConsumer(CheckedBiConsumer<T, T2> checkedBiConsumer, CircuitBreaker circuitBreaker) {
-        return (T t, T2 t2) -> CircuitBreaker.decorateCheckedSupplier(circuitBreaker, rxCheckedSupplier(checkedBiConsumer, t, t2)).get();
+        return (T t, T2 t2) -> CircuitBreaker.decorateCheckedSupplier(circuitBreaker, RxSupplier.toCheckedSupplier(checkedBiConsumer, t, t2)).get();
     }
 
     /**
@@ -261,6 +261,6 @@ public class RxConsumer {
      * @return consumer wrapped
      */
     public <T, T2> CheckedBiConsumer<T, T2> bulkheadCheckedBiConsumer(CheckedBiConsumer<T, T2> checkedBiConsumer, Bulkhead bulkhead) {
-        return (T t, T2 t2) -> Bulkhead.decorateCheckedSupplier(bulkhead, rxCheckedSupplier(checkedBiConsumer, t, t2)).get();
+        return (T t, T2 t2) -> Bulkhead.decorateCheckedSupplier(bulkhead, RxSupplier.toCheckedSupplier(checkedBiConsumer, t, t2)).get();
     }
 }

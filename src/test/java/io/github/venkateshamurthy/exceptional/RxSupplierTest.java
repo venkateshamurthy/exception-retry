@@ -46,7 +46,7 @@ class RxSupplierTest {
         rt = Retry.of("rt", RetryConfig.custom()
                 .maxAttempts(retryMaxAttempts)
                 .failAfterMaxAttempts(true)
-                .intervalFunction(FIBONACCI.millis(10,1200))
+                .intervalFunction(FIBONACCI.millis(10,120))
                 .retryExceptions(Exception.class,
                         TimeoutException.class,
                         NullPointerException.class,

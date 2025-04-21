@@ -47,7 +47,7 @@ import static org.mockito.Mockito.when;
 @ExtensionMethod(RxConsumer.class)
 class RxConsumerTest {
     private static final int LIMIT = 50;
-    private static final Duration TIMEOUT = Duration.ofSeconds(5);
+    private static final Duration TIMEOUT = Duration.ofSeconds(1);
     private static final Duration REFRESH_PERIOD = Duration.ofNanos(500);
     private final int retryMaxAttempts = 5;
     Bulkhead bh;
@@ -65,7 +65,7 @@ class RxConsumerTest {
         rt = Retry.of("rt", RetryConfig.custom()
                 .maxAttempts(retryMaxAttempts)
                 .failAfterMaxAttempts(true)
-                .intervalFunction(FIBONACCI.millis(10,1200))
+                .intervalFunction(FIBONACCI.millis(10,120))
                 .retryExceptions(Exception.class,
                         TimeoutException.class,
                         NullPointerException.class,

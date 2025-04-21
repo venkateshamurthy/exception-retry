@@ -38,7 +38,7 @@ public enum Delayer implements BiFunction<Duration, Duration, IntervalFunction> 
         public IntervalFunction apply(final Duration initial, final Duration maxDelay) {
             checkArgs(initial, maxDelay);
             return attempt -> {
-                val deltaMillis = RANDOM.nextDouble(0, 1) * maxDelay.minus(initial).toMillis();
+                val deltaMillis = RANDOM.nextDouble(0, 0.3) * maxDelay.minus(initial).toMillis();
                 return Long.min(maxDelay.toMillis(), initial.toMillis() + Double.doubleToLongBits(deltaMillis));
             };
         }

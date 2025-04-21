@@ -6,7 +6,6 @@ import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
 import io.github.resilience4j.core.functions.CheckedBiFunction;
 import io.github.resilience4j.core.functions.CheckedFunction;
 import io.github.resilience4j.core.functions.CheckedSupplier;
-import io.github.resilience4j.core.functions.Either;
 import io.github.resilience4j.ratelimiter.RateLimiter;
 import io.github.resilience4j.ratelimiter.RateLimiterConfig;
 import io.github.resilience4j.ratelimiter.RequestNotPermitted;
@@ -24,11 +23,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.Mockito;
 
-import java.io.IOException;
 import java.time.Duration;
 import java.util.concurrent.Callable;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -85,9 +81,9 @@ class RateLimiterTest {
 
     @AllArgsConstructor @Getter
     private enum  RxCheckedSupplierSource  implements CheckedSupplier {
-        CC(RxSupplier.rxCheckedSupplier((String s)->log.info(s), "Checked Consumer: Hello World!")),
-        CBIF(RxSupplier.rxCheckedSupplier(String::concat, "Checked Bi Function: Hello", " World!")),
-        CBIC(RxSupplier.rxCheckedSupplier((String s, String s2)->log.info(s+s2), "Checked Bi Consumer: Hello", " World!"));
+        CC(RxSupplier.toCheckedSupplier((String s)->log.info(s), "Checked Consumer: Hello World!")),
+        CBIF(RxSupplier.toCheckedSupplier(String::concat, "Checked Bi Function: Hello", " World!")),
+        CBIC(RxSupplier.toCheckedSupplier((String s, String s2)->log.info(s+s2), "Checked Bi Consumer: Hello", " World!"));
 
         private CheckedSupplier core;
         private void setRateLimiter(RateLimiter RL){core = core.rateLimitCheckedSupplier(RL);}
@@ -100,9 +96,9 @@ class RateLimiterTest {
     @AllArgsConstructor
     @Getter
     private enum RxSupplierSource  implements Supplier {
-        CONSUMER(RxSupplier.rxSupplier((String s)->log.info(s), "Consumer: Hello World!")),
-        BI_FUNCTION(RxSupplier.rxSupplier(String::concat, "Bi Function: Hello", " World!")),
-        BI_CONSUMER(RxSupplier.rxSupplier((String s1, String s2)->log.info(s1+s2), "Bi Consumer: Hello", " World!"));
+        CONSUMER(RxSupplier.toSupplier((String s)->log.info(s), "Consumer: Hello World!")),
+        BI_FUNCTION(RxSupplier.toSupplier(String::concat, "Bi Function: Hello", " World!")),
+        BI_CONSUMER(RxSupplier.toSupplier((String s1, String s2)->log.info(s1+s2), "Bi Consumer: Hello", " World!"));
 
         private Supplier core;
         private void setRateLimiter(RateLimiter RL){core = core.rateLimitSupplier(RL);}
