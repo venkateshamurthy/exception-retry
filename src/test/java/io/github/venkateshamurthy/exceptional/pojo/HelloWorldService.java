@@ -165,7 +165,7 @@ public interface HelloWorldService {
         setInvoked();
         throwExceptionCount.decrementAndGet();
         if (shouldThrow()) throw new RuntimeException("runtime exception:"+ throwExceptionCount.get());
-        log.info(greeting);
+        log.debug(greeting);
     }
 
     /**
@@ -177,7 +177,7 @@ public interface HelloWorldService {
         setInvoked();
         throwExceptionCount.decrementAndGet();
         if (shouldThrow()) throw new IOException("ioException:"+ throwExceptionCount.get());
-        log.info(greeting);
+        log.debug(greeting);
     }
 
     /**
@@ -190,7 +190,7 @@ public interface HelloWorldService {
         setInvoked();
         throwExceptionCount.decrementAndGet();
         if (shouldThrow()) throw new RuntimeException("runtime exception:"+ throwExceptionCount.get());
-        log.info(greeting);
+        log.debug(greeting);
     }
 
     /**
@@ -203,7 +203,7 @@ public interface HelloWorldService {
         setInvoked();
         throwExceptionCount.decrementAndGet();
         if (shouldThrow()) throw new IOException("ioException:"+ throwExceptionCount.get());
-        log.info(greeting);
+        log.debug(greeting);
     }
 
     /**
@@ -217,7 +217,7 @@ public interface HelloWorldService {
         setInvoked();
         throwExceptionCount.decrementAndGet();
         if (shouldThrow()) throw new RuntimeException("runtime exception:"+ throwExceptionCount.get());
-        log.info(greeting+" "+title+" "+name);
+        log.debug(greeting+" "+title+" "+name);
     }
 
     /**
@@ -231,6 +231,6 @@ public interface HelloWorldService {
         setInvoked();
         throwExceptionCount.decrementAndGet();
         if (shouldThrow()) throw new IOException("ioException:"+ throwExceptionCount.get());
-        log.info(greeting +" "+title+" "+name);
+        log.debug(greeting +" "+title+" "+name);
     }
 }

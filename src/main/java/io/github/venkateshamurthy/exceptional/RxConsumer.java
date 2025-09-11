@@ -10,9 +10,6 @@ import lombok.experimental.UtilityClass;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-import static io.github.venkateshamurthy.exceptional.RxSupplier.toCheckedSupplier;
-import static io.github.venkateshamurthy.exceptional.RxSupplier.toSupplier;
-
 /**
  * A {@link Consumer} and {@link CheckedConsumer} wrappering utility.
  */

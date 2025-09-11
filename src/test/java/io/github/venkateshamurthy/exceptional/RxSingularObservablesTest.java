@@ -65,7 +65,7 @@ class RxSingularObservablesTest {
     void testRetry(){
         Single<String> s = Single.fromCallable(() -> {
             if (i.incrementAndGet() < 8) {
-                log.error("Error:{}",i);
+                log.debug("Error:{}",i);
                 throw new TimeoutException();
             }
             return ("Hello");
@@ -74,7 +74,7 @@ class RxSingularObservablesTest {
 
         s = Single.fromCallable(() -> {
             if (i.incrementAndGet() < 2) {
-                log.error("Error:{}",i);
+                log.debug("Error:{}",i);
                 throw new TimeoutException();
             }
             return ("Hello");
@@ -86,7 +86,7 @@ class RxSingularObservablesTest {
     void testRetryObservable(){
         Observable<String> s = Observable.fromCallable(() -> {
             if (i.incrementAndGet() < 8) {
-                log.error("Error:{}",i);
+                log.debug("Error:{}",i);
                 throw new TimeoutException();
             }
             return ("Hello");
@@ -95,7 +95,7 @@ class RxSingularObservablesTest {
 
         s = Observable.fromCallable(() -> {
             if (i.incrementAndGet() < 2) {
-                log.error("Error:{}",i);
+                log.debug("Error:{}",i);
                 throw new TimeoutException();
             }
             return ("Hello");

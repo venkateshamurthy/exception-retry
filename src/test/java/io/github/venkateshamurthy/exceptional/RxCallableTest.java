@@ -71,7 +71,7 @@ class RxCallableTest {
             final AtomicInteger i = new AtomicInteger(-1);
             @Override
             public String call() throws Exception {
-                log.info("I="+i.incrementAndGet());
+                log.debug("I="+i.incrementAndGet());
                 if(i.get()      < number - 3) throw new IOException(i+"-ioException");
                 else if(i.get() < number - 2) throw new RemoteException(i+"-remoteException");
                 else if(i.get() < number - 1) throw new AccessException(i+"-accessException");
@@ -111,7 +111,7 @@ class RxCallableTest {
             final AtomicInteger i = new AtomicInteger(-1);
             @Override
             public String call() throws Exception {
-                log.info("I="+i.incrementAndGet());
+                log.debug("I="+i.incrementAndGet());
                 if(i.get()      < number - 3) throw new IOException(i+"-ioException");
                 else if(i.get() < number - 2) throw new RemoteException(i+"-remoteException");
                 else if(i.get() < number - 1) throw new AccessException(i+"-accessException");
@@ -120,16 +120,16 @@ class RxCallableTest {
             public  Callable<String> get() {
                 if      (number == 1) return this;
                 else if (number == 2) return errorConsumedCallable(this,
-                        AccessException.class, x -> log.info("x="+x.toString()));
+                        AccessException.class, x -> log.debug("x="+x.toString()));
                 else if (number == 3) return errorConsumedCallable(this,
-                        AccessException.class, x -> log.info("x1="+x.toString()),
-                        RemoteException.class, x -> log.info("x2="+x.toString()));
+                        AccessException.class, x -> log.debug("x1="+x.toString()),
+                        RemoteException.class, x -> log.debug("x2="+x.toString()));
                 else                  return errorConsumedCallable(this,
                         // remember you need to align the exception class in hierarchy here
                         // always the least child hierarchy in the first to base exception in the last
-                        AccessException.class, x -> log.info("xa="+x.toString()),
-                        RemoteException.class, x -> log.info("xb="+x.toString()),
-                        IOException.class,     x -> log.info("xc="+x.toString()));
+                        AccessException.class, x -> log.debug("xa="+x.toString()),
+                        RemoteException.class, x -> log.debug("xb="+x.toString()),
+                        IOException.class,     x -> log.debug("xc="+x.toString()));
             }
         }
 

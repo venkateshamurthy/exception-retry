@@ -81,9 +81,9 @@ class RateLimiterTest {
 
     @AllArgsConstructor @Getter
     private enum  RxCheckedSupplierSource  implements CheckedSupplier {
-        CC(RxSupplier.toCheckedSupplier((String s)->log.info(s), "Checked Consumer: Hello World!")),
+        CC(RxSupplier.toCheckedSupplier((String s)->log.debug(s), "Checked Consumer: Hello World!")),
         CBIF(RxSupplier.toCheckedSupplier(String::concat, "Checked Bi Function: Hello", " World!")),
-        CBIC(RxSupplier.toCheckedSupplier((String s, String s2)->log.info(s+s2), "Checked Bi Consumer: Hello", " World!"));
+        CBIC(RxSupplier.toCheckedSupplier((String s, String s2)->log.debug(s+s2), "Checked Bi Consumer: Hello", " World!"));
 
         private CheckedSupplier core;
         private void setRateLimiter(RateLimiter RL){core = core.rateLimitCheckedSupplier(RL);}
@@ -96,9 +96,9 @@ class RateLimiterTest {
     @AllArgsConstructor
     @Getter
     private enum RxSupplierSource  implements Supplier {
-        CONSUMER(RxSupplier.toSupplier((String s)->log.info(s), "Consumer: Hello World!")),
+        CONSUMER(RxSupplier.toSupplier((String s)->log.debug(s), "Consumer: Hello World!")),
         BI_FUNCTION(RxSupplier.toSupplier(String::concat, "Bi Function: Hello", " World!")),
-        BI_CONSUMER(RxSupplier.toSupplier((String s1, String s2)->log.info(s1+s2), "Bi Consumer: Hello", " World!"));
+        BI_CONSUMER(RxSupplier.toSupplier((String s1, String s2)->log.debug(s1+s2), "Bi Consumer: Hello", " World!"));
 
         private Supplier core;
         private void setRateLimiter(RateLimiter RL){core = core.rateLimitSupplier(RL);}
@@ -142,15 +142,15 @@ class RateLimiterTest {
         decorated.setRateLimiter(rl);
         given(rl.acquirePermission(1)).willReturn(false);
         Try decoratedSupplierResult = Try.ofSupplier(decorated.resetInvoked())
-                .onFailure(RequestNotPermitted.class, e->log.info("HHHHHAAAA:"+e));
+                .onFailure(RequestNotPermitted.class, e->log.debug("HHHHHAAAA:"+e));
         assertThat(decoratedSupplierResult.isFailure()).isTrue();
         assertThat(decoratedSupplierResult.getCause()).isInstanceOf(RequestNotPermitted.class);
         assertFalse(decorated.isInvoked(), "The invocation  should not have occurred");
 
         given(rl.acquirePermission(1)).willReturn(true);
         Try secondSupplierResult = Try.ofSupplier(decorated.resetInvoked())
-                .onSuccess(s->log.info("secondSupplierResult:SUCCESS:"+s))
-                .onFailure(RequestNotPermitted.class, e->log.info("HHHHHAAAA:"+e));;
+                .onSuccess(s->log.debug("secondSupplierResult:SUCCESS:"+s))
+                .onFailure(RequestNotPermitted.class, e->log.debug("HHHHHAAAA:"+e));;
         assertThat(secondSupplierResult.isSuccess()).isTrue();
         assertTrue(decorated.isInvoked(), "The invocation  should  have occurred");
     }
@@ -185,7 +185,7 @@ class RateLimiterTest {
         Function<String, String> function = toFunction(service::returnHelloWorldWithName).rateLimitFunction(rl);
         given(rl.acquirePermission(1)).willReturn(false);
         Try<String> tryFunc = function.tryWrap("")
-                .onFailure(RequestNotPermitted.class, e->log.info("HHHHHAAAA:"+e));
+                .onFailure(RequestNotPermitted.class, e->log.debug("HHHHHAAAA:"+e));
         assertThat(tryFunc.isFailure()).isTrue();
         assertThat(tryFunc.getCause()).isInstanceOf(RequestNotPermitted.class);
         assertFalse(service.isInvoked(), "The invocation  should not have occurred");
@@ -193,8 +193,8 @@ class RateLimiterTest {
         given(rl.acquirePermission(1)).willReturn(true);
         service.resetInvoked();
         Try<String> tryFunc2 = function.tryWrap("")
-                .onSuccess(s->log.info("secondSupplierResult:SUCCESS:"+s))
-                .onFailure(RequestNotPermitted.class, e->log.info("HHHHHAAAA:"+e));;
+                .onSuccess(s->log.debug("secondSupplierResult:SUCCESS:"+s))
+                .onFailure(RequestNotPermitted.class, e->log.debug("HHHHHAAAA:"+e));;
         assertThat(tryFunc2.isSuccess()).isTrue();
         assertTrue(service.isInvoked(), "The invocation  should  have occurred");
     }
@@ -205,7 +205,7 @@ class RateLimiterTest {
                 .rateLimitBiFunction(rl);
         given(rl.acquirePermission(1)).willReturn(false);
         Try<String> tryFunc = function.tryWrap("","")
-                .onFailure(RequestNotPermitted.class, e->log.info("HHHHHAAAA:"+e));
+                .onFailure(RequestNotPermitted.class, e->log.debug("HHHHHAAAA:"+e));
         assertThat(tryFunc.isFailure()).isTrue();
         assertThat(tryFunc.getCause()).isInstanceOf(RequestNotPermitted.class);
         assertFalse(service.isInvoked(), "The invocation  should not have occurred");
@@ -213,8 +213,8 @@ class RateLimiterTest {
         given(rl.acquirePermission(1)).willReturn(true);
         service.resetInvoked();
         Try<String> tryFunc2 = function.tryWrap("","")
-                .onSuccess(s->log.info("secondSupplierResult:SUCCESS:"+s))
-                .onFailure(RequestNotPermitted.class, e->log.info("HHHHHAAAA:"+e));
+                .onSuccess(s->log.debug("secondSupplierResult:SUCCESS:"+s))
+                .onFailure(RequestNotPermitted.class, e->log.debug("HHHHHAAAA:"+e));
         assertThat(tryFunc2.isSuccess()).isTrue();
         assertTrue(service.isInvoked(), "The invocation  should  have occurred");
     }
@@ -225,7 +225,7 @@ class RateLimiterTest {
                 .rateLimitCheckedFunction(rl);
         given(rl.acquirePermission(1)).willReturn(false);
         Try<String> tryFunc = function.tryWrap("")
-                .onFailure(RequestNotPermitted.class, e->log.info("HHHHHAAAA:"+e));
+                .onFailure(RequestNotPermitted.class, e->log.debug("HHHHHAAAA:"+e));
         assertThat(tryFunc.isFailure()).isTrue();
         assertThat(tryFunc.getCause()).isInstanceOf(RequestNotPermitted.class);
         assertFalse(service.isInvoked(), "The invocation  should not have occurred");
@@ -233,8 +233,8 @@ class RateLimiterTest {
         given(rl.acquirePermission(1)).willReturn(true);
         service.resetInvoked();
         Try<String> tryFunc2 = function.tryWrap("")
-                .onSuccess(s->log.info("secondResult:SUCCESS:"+s))
-                .onFailure(RequestNotPermitted.class, e->log.info("HHHHHAAAA:"+e));;
+                .onSuccess(s-> log.debug("secondResult:SUCCESS:" + s))
+                .onFailure(RequestNotPermitted.class, e->log.debug("HHHHHAAAA:"+e));;
         assertThat(tryFunc2.isSuccess()).isTrue();
         assertTrue(service.isInvoked(), "The invocation  should  have occurred");
     }
@@ -245,7 +245,7 @@ class RateLimiterTest {
                 .rateLimitCheckedBiFunction(rl);
         given(rl.acquirePermission(1)).willReturn(false);
         Try<String> tryFunc = function.tryWrap("","")
-                .onFailure(RequestNotPermitted.class, e->log.info("HHHHHAAAA:"+e));
+                .onFailure(RequestNotPermitted.class, e->log.debug("HHHHHAAAA:"+e));
         assertThat(tryFunc.isFailure()).isTrue();
         assertThat(tryFunc.getCause()).isInstanceOf(RequestNotPermitted.class);
         assertFalse(service.isInvoked(), "The invocation  should not have occurred");
@@ -253,8 +253,8 @@ class RateLimiterTest {
         given(rl.acquirePermission(1)).willReturn(true);
         service.resetInvoked();
         Try<String> tryFunc2 = function.tryWrap("","")
-                .onSuccess(s->log.info("secondResult:SUCCESS:"+s))
-                .onFailure(RequestNotPermitted.class, e->log.info("HHHHHAAAA:"+e));
+                .onSuccess(s->log.debug("secondResult:SUCCESS:"+s))
+                .onFailure(RequestNotPermitted.class, e->log.debug("HHHHHAAAA:"+e));
         assertThat(tryFunc2.isSuccess()).isTrue();
         assertTrue(service.isInvoked(), "The invocation  should  have occurred");
     }

@@ -4,10 +4,12 @@ import io.github.resilience4j.core.IntervalFunction;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.math3.distribution.PoissonDistribution;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.BiFunction;
 
 import static java.lang.Math.pow;
@@ -30,6 +32,23 @@ public enum Delayer implements BiFunction<Duration, Duration, IntervalFunction> 
             return IntervalFunction.of(initial);
         }
     },
+
+    /** Logarithmic backoff.*/
+    LOGARITHMIC() {
+        final double multiplier = 1.6180339d; //Assuming a multiplier
+        @Override
+        public IntervalFunction apply(final Duration initial, final Duration maxDelay) {
+            checkArgs(initial, maxDelay);
+            return attempt -> {
+                if (attempt <= 0) { return 0L; }
+                long logDelay = (long) (initial.toMillis() * multiplier * Math.log(attempt + 1));
+                long bound = logDelay / 2;
+                long jitter = bound > 0 ? ThreadLocalRandom.current().nextLong(0, bound): 0L;
+                return Long.min(logDelay + jitter, maxDelay.toMillis());
+            };
+        }
+    },
+
     /**
      * Default delay with random jitter.
      */
@@ -43,6 +62,7 @@ public enum Delayer implements BiFunction<Duration, Duration, IntervalFunction> 
             };
         }
     },
+
     /**
      * Linear delay with jitter.
      */
@@ -54,6 +74,7 @@ public enum Delayer implements BiFunction<Duration, Duration, IntervalFunction> 
                     (attempt > 1 ? RANDOM.nextInt(1, attempt) : 0) * maxDelay.minus(initial).toMillis());
         }
     },
+
     /**
      * Linear delay.
      */
@@ -78,6 +99,7 @@ public enum Delayer implements BiFunction<Duration, Duration, IntervalFunction> 
                     initial.toMillis() + round(pow(phi, attempt) / sqrt5 * 1000));
         }
     },
+
     /**
      * Exponential delay.
      */
@@ -88,6 +110,7 @@ public enum Delayer implements BiFunction<Duration, Duration, IntervalFunction> 
             return attempt -> IntervalFunction.ofExponentialBackoff(initial, 2, maxDelay).apply(attempt);
         }
     },
+
     /**
      * Exponential jitter delay.
      */

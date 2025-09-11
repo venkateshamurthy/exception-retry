@@ -6,14 +6,11 @@ import io.github.resilience4j.core.functions.CheckedBiFunction;
 import io.github.resilience4j.core.functions.CheckedFunction;
 import io.github.resilience4j.ratelimiter.RateLimiter;
 import io.github.resilience4j.retry.Retry;
-import lombok.NoArgsConstructor;
 import lombok.experimental.ExtensionMethod;
 import lombok.experimental.UtilityClass;
 
 import java.util.function.*;
 
-import static io.github.venkateshamurthy.exceptional.RxSupplier.toCheckedSupplier;
-import static io.github.venkateshamurthy.exceptional.RxSupplier.toSupplier;
 import static io.github.venkateshamurthy.exceptional.RxTry.ceMapper;
 import static io.github.venkateshamurthy.exceptional.RxTry.rteMapper;
 
@@ -111,6 +108,20 @@ public class RxFunction {
      * @return function as is
      */
     public static <T, T2, R> CheckedBiFunction<T, T2, R> toCheckedBiFunction(CheckedBiFunction<T, T2, R> function) {
+        return function;
+    }
+
+    /**
+     * Reflexive convenience method for chaining
+     *
+     * @param function to be seen as CheckedTriFunction
+     * @param <T>      type of input
+     * @param <T2>     2nd type
+     * @param <T3> .   3rd type
+     * @param <R>      type of result
+     * @return function as is
+     */
+    public static <T, T2, T3, R> CheckedTriFunction<T, T2, T3, R> toCheckedTriFunction(CheckedTriFunction<T, T2, T3, R> function) {
         return function;
     }
 

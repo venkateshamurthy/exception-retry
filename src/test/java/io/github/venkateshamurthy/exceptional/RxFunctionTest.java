@@ -29,6 +29,7 @@ import java.util.function.*;
 
 import static io.github.venkateshamurthy.exceptional.Delayer.FIBONACCI;
 import static io.github.venkateshamurthy.exceptional.RxFunction.*;
+import static io.github.venkateshamurthy.exceptional.RxSupplier.toCheckedSupplier;
 import static java.math.BigInteger.ONE;
 import static java.math.BigInteger.TWO;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -37,7 +38,7 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.*;
 
 @Slf4j
-@ExtensionMethod({RxFunction.class, RxTry.class})
+@ExtensionMethod({RxFunction.class, RxTry.class, Eithers.class})
 class RxFunctionTest {
     private final int retryMaxAttempts = 5;
     Bulkhead bh;
@@ -87,7 +88,7 @@ class RxFunctionTest {
             final AtomicInteger i = new AtomicInteger(-1);
             @Override
             public String apply(String in)  {
-                log.info("I="+i.incrementAndGet());
+                log.debug("I="+i.incrementAndGet());
                 if(i.get()      < number - 3) throw new UnsupportedOperationException(i+"-unsupportedException");
                 else if(i.get() < number - 2) throw new IllegalStateException(i+"-illegalStateException");
                 else if(i.get() < number - 1) throw new NullPointerException(i+"-nullPtrException");
@@ -119,7 +120,7 @@ class RxFunctionTest {
             final AtomicInteger i = new AtomicInteger(-1);
             @Override
             public String apply(String in)  throws Throwable{
-                log.info("I="+i.incrementAndGet());
+                log.debug("I="+i.incrementAndGet());
                 if(i.get()      < number - 3) throw new IOException(i+"-ioException");
                 else if(i.get() < number - 2) throw new RemoteException(i+"-remoteException");
                 else if(i.get() < number - 1) throw new AccessException(i+"-accessException");
@@ -151,7 +152,7 @@ class RxFunctionTest {
             final AtomicInteger i = new AtomicInteger(-1);
             @Override
             public String apply(String in, String out)  throws Throwable{
-                log.info("I="+i.incrementAndGet());
+                log.debug("I="+i.incrementAndGet());
                 if(i.get()      < number - 3) throw new IOException(i+"-ioException");
                 else if(i.get() < number - 2) throw new RemoteException(i+"-remoteException");
                 else if(i.get() < number - 1) throw new AccessException(i+"-accessException");
@@ -183,7 +184,7 @@ class RxFunctionTest {
             final AtomicInteger i = new AtomicInteger(-1);
             @Override
             public String apply(String in, String out)  {
-                log.info("I="+i.incrementAndGet());
+                log.debug("I="+i.incrementAndGet());
                 if(i.get()      < number - 3) throw new RuntimeException(i+"-runtimeException");
                 else if(i.get() < number - 2) throw new NullPointerException(i+"-nullPtrException");
                 else if(i.get() < number - 1) throw new UnsupportedOperationException(i+"-unsupportedException");
@@ -215,7 +216,7 @@ class RxFunctionTest {
             final AtomicInteger i = new AtomicInteger(-1);
             @Override
             public String apply(String in, String out)  throws Throwable{
-                log.info("I="+i.incrementAndGet());
+                log.debug("I="+i.incrementAndGet());
                 if(i.get()      < number - 3) throw new IOException(i+"-ioException");
                 else if(i.get() < number - 2) throw new RemoteException(i+"-remoteException");
                 else if(i.get() < number - 1) throw new AccessException(i+"-accessException");
@@ -225,16 +226,16 @@ class RxFunctionTest {
                 var x = "something";
                 if      (number == 1) return this;
                 else if (number == 2) return errorConsumedCheckedBiFunction(this,
-                        AccessException.class, (ex) -> log.info("{}", ex));
+                        AccessException.class, (ex) -> log.debug("{}", ex.getMessage()));
                 else if (number == 3) return errorConsumedCheckedBiFunction(this,
-                        AccessException.class, (ex) -> log.info("{}", ex),
-                        RemoteException.class, (ex) -> log.info("{}", ex));
+                        AccessException.class, (ex) -> log.debug("{}", ex.getMessage()),
+                        RemoteException.class, (ex) -> log.debug("{}", ex.getMessage()));
                 else return errorConsumedCheckedBiFunction(this,
                         // remember you need to align the exception class in hierarchy here
                         // always the least child hierarchy in the first to base exception in the last
-                        AccessException.class, (ex) -> log.info("{}", ex),
-                        RemoteException.class, (ex) -> log.info("{}", ex),
-                        IOException.class, (ex) -> log.info("{}", ex));
+                        AccessException.class, (ex) -> log.debug("{}", ex.getMessage()),
+                        RemoteException.class, (ex) -> log.debug("{}", ex.getMessage()),
+                        IOException.class, (ex) -> log.debug("{}", ex.getMessage()));
             }
         }
         assertEquals(greeting.toUpperCase(), assertDoesNotThrow(()->new temp().get().retryCheckedBiFunction(rt).apply(greeting,"")));
@@ -248,7 +249,7 @@ class RxFunctionTest {
             final AtomicInteger i = new AtomicInteger(-1);
             @Override
             public String apply(String in, String out)  {
-                log.info("I="+i.incrementAndGet());
+                log.debug("I="+i.incrementAndGet());
                 if(i.get()      < number - 3) throw new RuntimeException(i+"-runtimeException");
                 else if(i.get() < number - 2) throw new NullPointerException(i+"-nullPtrException");
                 else if(i.get() < number - 1) throw new UnsupportedOperationException(i+"-unsupportedException");
@@ -279,7 +280,7 @@ class RxFunctionTest {
             final AtomicInteger i = new AtomicInteger(-1);
             @Override
             public String apply(String in)  {
-                log.info("I="+i.incrementAndGet());
+                log.debug("I="+i.incrementAndGet());
                 if(i.get()      < number - 3) throw new UnsupportedOperationException(i+"-unsupportedException");
                 else if(i.get() < number - 2) throw new IllegalStateException(i+"-illegalStateException");
                 else if(i.get() < number - 1) throw new NullPointerException(i+"-nullPtrException");
@@ -310,7 +311,7 @@ class RxFunctionTest {
             final AtomicInteger i = new AtomicInteger(-1);
             @Override
             public String apply(String in)  {
-                log.info("I="+i.incrementAndGet());
+                log.debug("I="+i.incrementAndGet());
                 if(i.get()      < number - 3) throw new UnsupportedOperationException(i+"-unsupportedException");
                 else if(i.get() < number - 2) throw new IllegalStateException(i+"-illegalStateException");
                 else if(i.get() < number - 1) throw new NullPointerException(i+"-nullPtrException");
@@ -438,5 +439,38 @@ class RxFunctionTest {
 
         assertEquals(greeting.apply("",""), assertDoesNotThrow(()->callable.apply("","")));
         assertThat(metrics.getNumberOfTotalCalls()).isEqualTo(retryMaxAttempts+4);
+    }
+
+    @Test
+    void testCheckedBiFunction() {
+        var cbif = toCheckedBiFunction(String::concat);
+        assertEquals("ab", cbif.bulkheadCheckedBiFunction(bh).either("a", "b").orElseThrow());
+        assertEquals("ab", cbif.circuitBreakCheckedBiFunction(cb).either("a", "b").orElseThrow());
+        assertThrows(NullPointerException.class, ()->cbif.bulkheadCheckedBiFunction(bh).either(null,null).orElseThrow());
+        assertThrows(NullPointerException.class, ()->cbif.circuitBreakCheckedBiFunction(cb).either(null,null).orElseThrow());
+        assertEquals("ab",toFunction(String::toString).bulkheadFunction(bh).either("ab").orElseThrow());
+        assertThrows(NullPointerException.class, ()->toFunction(String::toString).bulkheadFunction(bh).either(null).orElseThrow());
+        assertThrows(NullPointerException.class, ()->toBiFunction(String::concat).bulkheadBiFunction(bh).either(null,null).orElseThrow());
+        assertEquals("ab", toBiFunction(String::concat).bulkheadBiFunction(bh).either("a", "b").orElseThrow());
+    }
+
+    @Test
+    void testUnaryBinary(){
+        UnaryOperator<String> unary = toUnaryOperator(String::toString);
+        BinaryOperator<String>binary = toBinaryOperator(String::concat);
+        assertEquals("a",unary.apply("a"));
+        assertEquals("a",binary.apply("a",""));
+    }
+
+    @Test
+    void testCheckedFunctions() {
+        assertEquals("ab",  toBinaryOperator(String::concat).apply("a","b"));
+        assertEquals("a",  toUnaryOperator((String s)->s.toLowerCase()).apply("A"));
+        var cbf = toCheckedBiFunction(String::concat);
+        var ctrif = toCheckedTriFunction((String delimiter, String a, String b)->String.join(delimiter, a, b));
+        assertEquals("ab", cbf.tryWrap("a","b").get() );
+        assertEquals("ab", ctrif.tryWrap("","a","b").get());
+        assertThrows(NullPointerException.class, ()->cbf.either(null, null).orElseThrow() );
+        assertThrows(NullPointerException.class, ()->ctrif.either(null,null,null).orElseThrow() );
     }
 }

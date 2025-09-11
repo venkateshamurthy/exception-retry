@@ -11,6 +11,7 @@ import io.github.resilience4j.retry.Retry;
 import lombok.SneakyThrows;
 import lombok.experimental.ExtensionMethod;
 import lombok.experimental.UtilityClass;
+import org.apache.commons.lang3.function.TriFunction;
 
 import java.util.function.*;
 
@@ -43,6 +44,22 @@ public class RxSupplier {
      */
     public static <R> Supplier<R> toSupplier(Supplier<R> supplier) {
         return supplier;
+    }
+
+    /**
+     * Gets a Supplier modeling the {@link TriFunction}
+     * @param triFunction to operate on three arguments
+     * @param t parameter 1
+     * @param t2 parameter 2
+     * @param t3 parameter 3
+     * @return Supplier wrappering the triFunction execution
+     * @param <T> type 1
+     * @param <T2> type 2
+     * @param <T3> type 3
+     * @param <R> result type
+     */
+    public static <T, T2, T3, R> Supplier<R> toSupplier(TriFunction<T,T2,T3,R> triFunction, T t, T2 t2, T3 t3) {
+        return ()->triFunction.apply(t, t2, t3);
     }
 
     /**
@@ -247,6 +264,23 @@ public class RxSupplier {
      */
     public static <T, T2, R> CheckedSupplier<R> toCheckedSupplier(CheckedBiFunction<T, T2, R> checkedBiFunction, T t, T2 t2) {
         return () -> checkedBiFunction.apply(t, t2);
+    }
+
+    /**
+     * A  {@link CheckedSupplier} form of {@link CheckedTriFunction}
+     *
+     * @param checkedTriFunction input
+     * @param t                 1st input to the checkedTriFunction
+     * @param t2                2nd input to the checkedTriFunction
+     * @param t3                3rd input to the checkedTriFunction
+     * @param <T>               type of input
+     * @param <T2>              type of input
+     * @param <T3>              type of input
+     * @param <R>               type of result
+     * @return CheckedSupplier wrapped input
+     */
+    public static <T, T2, T3, R> CheckedSupplier<R> toCheckedSupplier(CheckedTriFunction<T, T2, T3, R> checkedTriFunction, T t, T2 t2, T3 t3) {
+        return () -> checkedTriFunction.apply(t, t2, t3);
     }
 
     /**
@@ -494,4 +528,6 @@ public class RxSupplier {
             Class<X3> ex3, UnaryOperator<Exception> op3) {
         return () -> supplier.tryWrap().mapException(ex, op, ex2, op2, ex3, op3).getOrElseThrow(ceMapper);
     }
+
+
 }

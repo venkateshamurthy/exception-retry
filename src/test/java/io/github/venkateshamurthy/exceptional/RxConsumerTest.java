@@ -1,5 +1,6 @@
 package io.github.venkateshamurthy.exceptional;
 
+import com.sun.jdi.connect.IllegalConnectorArgumentsException;
 import io.github.resilience4j.bulkhead.Bulkhead;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.core.functions.CheckedConsumer;
@@ -292,6 +293,29 @@ class RxConsumerTest {
         assertTrue(decorated.isInvoked(), "The invocation  should  have occurred");
     }
 
+    @Test
+    void testBulkHead(){
+        assertDoesNotThrow(()->toConsumer(t->{}).bulkheadConsumer(bh).accept(null));
+        assertThrows(IllegalArgumentException.class,
+                ()->toConsumer(t->{throw new IllegalArgumentException(); }).bulkheadConsumer(bh).accept(null));
+
+        assertDoesNotThrow(()->toCheckedConsumer(t->{}).bulkheadCheckedConsumer(bh).accept(null));
+        assertThrows(IOException.class,
+                ()->toCheckedConsumer(t->{throw new IOException(); }).bulkheadCheckedConsumer(bh).accept(null));
+
+        assertDoesNotThrow(()->toBiConsumer((t,u)->{}).bulkheadBiConsumer(bh).accept(null,null));
+        assertThrows(IllegalArgumentException.class,
+                ()->toBiConsumer((t, u)->{throw new IllegalArgumentException(); })
+                        .bulkheadBiConsumer(bh).accept(null, null));
+
+        assertDoesNotThrow(()->toCheckedBiConsumer((t,u)->{}).bulkheadCheckedBiConsumer(bh)
+                .accept(null,null));
+        assertThrows(IOException.class,
+                ()->toCheckedBiConsumer((t, u)->{throw new IOException(); })
+                        .bulkheadCheckedBiConsumer(bh).accept(null, null));
+
+    }
+
     // Ratelimiting
     @AllArgsConstructor @Getter
     private class RxCheckedConsumerSource  {
@@ -330,4 +354,6 @@ class RxConsumerTest {
         boolean isInvoked(){ return invoked.get(); }
         @SneakyThrows public Object get() {core.accept("","");invoked.set(true);return null;}
     }
+
+
 }

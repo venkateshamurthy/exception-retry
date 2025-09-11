@@ -122,7 +122,12 @@ class DelayerTest {
                     arguments(LINEAR_JITTER,      1,      120,   MILLISECONDS),//millis
                     arguments(LINEAR_JITTER,      1L,     2,     SECONDS), //seconds
                     arguments(LINEAR_JITTER,      0.01,   0.02,  MINUTES), //mins
-                    arguments(LINEAR_JITTER,      0.0001, 0.0005,HOURS)//hours
+                    arguments(LINEAR_JITTER,      0.0001, 0.0005,HOURS),//hours
+
+                    arguments(LOGARITHMIC,        1,      120,   MILLISECONDS),//millis
+                    arguments(LOGARITHMIC,        1L,     2,     SECONDS), //seconds
+                    arguments(LOGARITHMIC,        0.01,   0.02,  MINUTES), //mins
+                    arguments(LOGARITHMIC,        0.0001, 0.0005,HOURS)//hours
             );
         }
     }

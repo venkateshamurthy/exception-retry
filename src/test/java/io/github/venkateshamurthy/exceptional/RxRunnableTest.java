@@ -77,7 +77,7 @@ class RxRunnableTest {
                 .rateLimitCheckedRunnable(rateLimiter);
         when(rateLimiter.acquirePermission(1)).thenReturn(false);
         Try<Void> tryRun = runnable.tryWrap()
-                .onFailure(RequestNotPermitted.class, e->log.info("HHHHHAAAA:"+e));
+                .onFailure(RequestNotPermitted.class, e->log.debug("HHHHHAAAA:"+e));
         assertThat(tryRun.isFailure()).isTrue();
         assertThat(tryRun.getCause()).isInstanceOf(RequestNotPermitted.class);
         assertFalse(helloWorldService.isInvoked(), "The invocation  should not have occurred");
@@ -85,8 +85,8 @@ class RxRunnableTest {
         when(rateLimiter.acquirePermission(1)).thenReturn(true);
         helloWorldService.resetInvoked();
         Try<Void> tryRun2 = runnable.tryWrap()
-                .onSuccess(s->log.info("secondResult:SUCCESS:"+s))
-                .onFailure(RequestNotPermitted.class, e->log.info("HHHHHAAAA:"+e));
+                .onSuccess(s->log.debug("secondResult:SUCCESS:"+s))
+                .onFailure(RequestNotPermitted.class, e->log.debug("HHHHHAAAA:"+e));
         assertThat(tryRun2.isSuccess()).isTrue();
         assertTrue(helloWorldService.isInvoked(), "The invocation  should  have occurred");
     }
@@ -114,7 +114,7 @@ class RxRunnableTest {
                 .rateLimitRunnable(rateLimiter);
         when(rateLimiter.acquirePermission(1)).thenReturn(false);
         Try<Void> tryRun = runnable.tryWrap()
-                .onFailure(RequestNotPermitted.class, e->log.info("HHHHHAAAA:"+e));
+                .onFailure(RequestNotPermitted.class, e->log.debug("HHHHHAAAA:"+e));
         assertThat(tryRun.isFailure()).isTrue();
         assertThat(tryRun.getCause()).isInstanceOf(RequestNotPermitted.class);
         assertFalse(helloWorldService.isInvoked(), "The invocation  should not have occurred");
@@ -122,8 +122,8 @@ class RxRunnableTest {
         when(rateLimiter.acquirePermission(1)).thenReturn(true);
         helloWorldService.resetInvoked();
         Try<Void> tryRun2 = runnable.tryWrap()
-                .onSuccess(s->log.info("secondResult:SUCCESS:"+s))
-                .onFailure(RequestNotPermitted.class, e->log.info("HHHHHAAAA:"+e));
+                .onSuccess(s->log.debug("secondResult:SUCCESS:"+s))
+                .onFailure(RequestNotPermitted.class, e->log.debug("HHHHHAAAA:"+e));
         assertThat(tryRun2.isSuccess()).isTrue();
         assertTrue(helloWorldService.isInvoked(), "The invocation  should  have occurred");
     }
@@ -136,11 +136,11 @@ class RxRunnableTest {
             final AtomicInteger i = new AtomicInteger(-1);
             @Override
             public void run()  {
-                log.info("I="+i.incrementAndGet());
+                log.debug("I="+i.incrementAndGet());
                 if(i.get()      < number - 3) throw new IllegalArgumentException(i+"-IllegalArgumentException");
                 else if(i.get() < number - 2) throw new ArithmeticException(i+"-ArithmeticException");
                 else if(i.get() < number - 1) throw new ArrayIndexOutOfBoundsException(i+"-ArrayIndexOutOfBoundsException");
-                else log.info(greeting);
+                else log.debug(greeting);
             }
             public  Runnable get() {
                 if      (number == 1) return this;
@@ -168,11 +168,11 @@ class RxRunnableTest {
             final AtomicInteger i = new AtomicInteger(-1);
             @Override
             public void run()  {
-                log.info("I="+i.incrementAndGet());
+                log.debug("I="+i.incrementAndGet());
                 if(i.get()      < number - 3) throw new IllegalArgumentException(i+"-IllegalArgumentException");
                 else if(i.get() < number - 2) throw new ArithmeticException(i+"-ArithmeticException");
                 else if(i.get() < number - 1) throw new ArrayIndexOutOfBoundsException(i+"-ArrayIndexOutOfBoundsException");
-                else log.info(greeting);
+                else log.debug(greeting);
             }
             public  CheckedRunnable get() {
                 if      (number == 1) return this;
@@ -200,11 +200,11 @@ class RxRunnableTest {
             final AtomicInteger i = new AtomicInteger(-1);
             @Override
             public void run()  {
-                log.info("I="+i.incrementAndGet());
+                log.debug("I="+i.incrementAndGet());
                 if(i.get()      < number - 3) throw new IllegalArgumentException(i+"-IllegalArgumentException");
                 else if(i.get() < number - 2) throw new ArithmeticException(i+"-ArithmeticException");
                 else if(i.get() < number - 1) throw new ArrayIndexOutOfBoundsException(i+"-accessException");
-                else log.info(greeting);
+                else log.debug(greeting);
             }
             public  Runnable get() {
                 if      (number == 1) return this;
@@ -233,11 +233,11 @@ class RxRunnableTest {
             final AtomicInteger i = new AtomicInteger(-1);
             @Override
             public void run()  {
-                log.info("I="+i.incrementAndGet());
+                log.debug("I="+i.incrementAndGet());
                 if(i.get()      < number - 3) throw new IllegalArgumentException(i+"-IllegalArgumentException");
                 else if(i.get() < number - 2) throw new ArithmeticException(i+"-ArithmeticException");
                 else if(i.get() < number - 1) throw new ArrayIndexOutOfBoundsException(i+"-accessException");
-                else log.info(greeting);
+                else log.debug(greeting);
             }
             public  CheckedRunnable get() {
                 if      (number == 1) return this;

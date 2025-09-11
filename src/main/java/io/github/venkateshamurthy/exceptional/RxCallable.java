@@ -87,7 +87,7 @@ public class RxCallable {
      *
      * @param callable to be wrapped
      * @param ex       a {@code Class<Exception>} encountered by the callable
-     * @param op       transforming {@link UnaryOperator}
+     * @param op       transforming {@link UnaryOperator} to transform the ex3 to another exception
      * @param <X>      {@link Exception} type
      * @param <T>      result type
      * @return callable wrapped
@@ -103,9 +103,9 @@ public class RxCallable {
      *
      * @param callable to be wrapped
      * @param ex       a {@code Class<Exception>} encountered by the callable
-     * @param op       transforming {@link UnaryOperator} to transforming the ex to another exceotion
+     * @param op       transforming {@link UnaryOperator} to transform the ex to another exception
      * @param ex2      a {@code Class<Exception>} encountered by the callable
-     * @param op2      tranaforming {@link UnaryOperator} to transforming the ex2 to another exceotion
+     * @param op2      tranaforming {@link UnaryOperator} to transform the ex2 to another exception
      * @param <X>      Ist type of exception to be mapped
      * @param <X2>     2nd type of exception to be mapped
      * @param <T>      type of the result
@@ -123,11 +123,11 @@ public class RxCallable {
      *
      * @param callable to be wrapped
      * @param ex       a {@code Class<Exception>} encountered by the callable
-     * @param op       transforming {@link UnaryOperator} to transforming the ex to another exceotion
+     * @param op       transforming {@link UnaryOperator} to transform the ex to another exception
      * @param ex2      a {@code Class<Exception>} encountered by the callable
-     * @param op2      tranaforming {@link UnaryOperator} to transforming the ex2 to another exceotion
+     * @param op2      tranaforming {@link UnaryOperator} to transform the ex2 to another exception
      * @param ex3      a {@code Class<Exception>} encountered by the callable
-     * @param op3      tranaforming {@link UnaryOperator} to transforming the ex3 to another exceotion
+     * @param op3      tranaforming {@link UnaryOperator} to transform the ex3 to another exception
      * @param <X>      Ist type of exception to be mapped
      * @param <X2>     2nd type of exception to be mapped
      * @param <X3>     3rd type of exception to be mapped
@@ -153,10 +153,54 @@ public class RxCallable {
      * @return callable wrapped
      */
     public static <X extends Exception, T> Callable<T> errorMappedCallable(
-            Callable<T> callable,
-            Class<X> ex, Supplier<? extends Exception> op) {
+            Callable<T> callable, Class<X> ex, Supplier<Exception> op) {
         return () -> callable.tryWrap().mapException(ex, op).getOrElseThrow(ceMapper);
     }
+
+    /**
+     * An exception mapped callable wrapper
+     *
+     * @param callable to be wrapped
+     * @param ex       a {@code Class<Exception>} encountered by the callable
+     * @param op       transforming {@link Supplier} to provide an alternate exception
+     * @param ex2      a {@code Class<Exception>} encountered by the callable
+     * @param op2      tranaforming {@link Supplier} to provide an alternate exception
+     * @param <X>      Ist type of exception to be mapped
+     * @param <X2>     2nd type of exception to be mapped
+     * @param <T>      type of the result
+     * @return callable wrapped
+     */
+    public static <X extends Exception, X2 extends Exception, T> Callable<T> errorMappedCallable(
+            Callable<T> callable,
+            Class<X> ex, Supplier<Exception> op,
+            Class<X2> ex2, Supplier<Exception> op2) {
+        return () -> callable.tryWrap().mapException(ex, op, ex2, op2).getOrElseThrow(ceMapper);
+    }
+
+    /**
+     * An exception mapped callable wrapper
+     *
+     * @param callable to be wrapped
+     * @param ex       a {@code Class<Exception>} encountered by the callable
+     * @param op       transforming {@link Supplier} to provide an alternate exception
+     * @param ex2      a {@code Class<Exception>} encountered by the callable
+     * @param op2      tranaforming {@link Supplier} to provide an alternate exception
+     * @param ex3      a {@code Class<Exception>} encountered by the callable
+     * @param op3      tranaforming {@link Supplier} to provide an alternate exception
+     * @param <X>      Ist type of exception to be mapped
+     * @param <X2>     2nd type of exception to be mapped
+     * @param <X3>     3rd type of exception to be mapped
+     * @param <T>      type of the result
+     * @return callable wrapped
+     */
+    public static <X extends Exception, X2 extends Exception, X3 extends Exception, T> Callable<T> errorMappedCallable(
+            Callable<T> callable,
+            Class<X> ex, Supplier<Exception> op,
+            Class<X2> ex2, Supplier<Exception> op2,
+            Class<X3> ex3, Supplier<Exception> op3) {
+        return () -> callable.tryWrap().mapException(ex, op, ex2, op2, ex3, op3).getOrElseThrow(ceMapper);
+    }
+
 
     /**
      * An exception consuming callable wrapper

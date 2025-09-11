@@ -1,11 +1,280 @@
 # exception-retry
 
-A sample code to explore resilience4j and rxJava3
-Howto upload to central.sonatype.org
-1. do ```mvn clean install```
-   2. It will ask for the passphrase so please be ready with. You can just use mvn clean test (without passphrase)
-2. do ```mvn site``` to generate exception-retry-1.0-zip.zip
-3. Goto https://central.sonatype.com/publishing and upload the component 
-   1. deployment name : io.github.venkateshamurthy:exception-retry:1.0 
-   2. and choose the file exception-retry-1.0-zip.zip
-   3. Click validate and post validation click publish
+A sample code to explore resilience-4j and rxJava3
+
+## How to build and upload to central.sonatype.org
+1. You can just use ```mvn clean test``` (without passphrase) for local testing
+2. If you intend to push to next version increase the version number (say for eg: 1.2 -> 1.3).
+   * Do ```mvn clean install site -s ./settings.xml```  It might ask for the gpg passphrase so please be ready with it 
+   * This generates exception-retry-&lt;version&gt;-zip.zip
+4. Goto https://central.sonatype.com/publishing and upload the component(may be login with github login).details follows
+   * Namespace       : io.github.venkateshamurthy
+   * Deployment name : io.github.venkateshamurthy:exception-retry:&lt;version&gt; 
+   * Choose the file : target/exception-retry-&lt;version&gt;-zip.zip to upload as package
+   * Click validate and post validation. click publish. please note that once published it cannot be revoked 
+     * so be cautious what you are leaving the public to consume
+     * Keep code coverage > 90-95% and all the public  methods java-doc written
+     * Add examples of use in https://github.com/venkateshamurthy/exception-retry-example
+5. The uploading to sonatype requires to have proper ```settings.xml```. Make sure you have GPG key Ids created upfront and
+updated in settings.xml. Please refer to https://central.sonatype.org/publish/requirements/gpg/ to get an accurate 
+understanding as even one misstep here cannot get your package uploaded
+# ⚡ Exception-Retry — Functional Resilience for Java
+
+> **Elegant, composable error handling and retries** powered by [Resilience4j](https://resilience4j.readme.io/), [Vavr](https://www.vavr.io/), and Lombok’s [`@ExtensionMethod`](https://projectlombok.org/features/experimental/ExtensionMethod).
+
+[![Build](https://img.shields.io/github/actions/workflow/status/venkateshamurthy/exception-retry/maven.yml?branch=master)](https://github.com/venkateshamurthy/exception-retry/actions)
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.venkateshamurthy/exception-retry.svg?color=blue)](https://search.maven.org/artifact/io.github.venkateshamurthy/exception-retry)
+[![License](https://img.shields.io/github/license/venkateshamurthy/exception-retry.svg)](LICENSE)
+[![Java](https://img.shields.io/badge/java-17%2B-blue)](https://openjdk.org/)
+
+---
+
+## 🌱 Overview
+
+`exception-retry` transforms Java’s traditional exception handling into **declarative, functional pipelines**.
+
+It integrates:
+- ✅ **Resilience4j** for retries, circuit breakers, bulkheads, and rate limiters
+- ✅ **Vavr** for `Try` and `Either` semantics
+- ✅ **Lombok @ExtensionMethod** for *natural*, OO-style fluent APIs
+
+Instead of procedural `try/catch` spaghetti, write **intention-revealing resilience** like this:
+
+```java
+function
+  .errorMappedFunction(...)
+  .retryFunction(retry)
+  .tryWrap()
+  .toEither();
+```
+### Features
+| Category	              | Description                                                   |
+|------------------------|---------------------------------------------------------------|
+| Retry	                 |Declarative .retryFunction(), .retrySupplier(), .retryBiFunction()|
+| Error Mapping	         |Transform exceptions via .errorMappedFunction()                |
+| Error Consumption	     |React to exceptions without throwing via .errorConsumedFunction() |
+| Circuit Breaker	       |.circuitBreakFunction(cb) and .circuitBreakCheckedFunction(cb) |
+| Bulkhead	              |.bulkheadFunction(bh) and .bulkheadBiFunction(bh)              |
+| Try / Either Integration |Safe wrapping via .tryWrap() and .toEither()                  |
+| Checked Exceptions	    |Seamless handling of IOException, SQLException, etc.           |
+| Composable	            |Every transformation returns a function — pure and chainable   |
+ | CommonRuntimeException and ExceptionCode| Make it easier to construct error             |
+
+### Installation
+Add the following to your Maven pom.xml:
+```xml
+<dependency>
+    <groupId>io.github.venkateshamurthy</groupId>
+    <artifactId>exception-retry</artifactId>
+    <version>1.4</version> <!-- replace with latest -->
+</dependency>
+```
+### Quick Start
+Enable Lombok's Extension Methods such as follows (in case if you are willing tomake sue of Lombok's experimental feature)
+```java
+import lombok.experimental.ExtensionMethod;
+import io.github.venkateshamurthy.exceptional.*;
+
+@ExtensionMethod({RxFunction.class,RxSupplier.class,RxTry.class})
+public class MyService { }
+```
+You can call now as
+
+|With Extension Method                | Without Extension Method                        |
+|-------------------------------------|-----------------------------------------------  |
+|function.retryFunction(retry);       | RxFunction.retryFunction(function, retry);      |
+|supplier.errorConsumedSupplier(...) |RxSupplier.errorConsumedSupplier(supplier,...)   |
+|checkedFn.retryCheckedFunction(...) |RxFunction.retryCheckedFunction(checkedFn,retry);|
+
+### Delay and RetryConfig use
+```java
+import io.github.resilience4j.retry.Retry;
+import io.github.resilience4j.retry.RetryConfig;
+import static io.github.venkateshamurthy.exceptional.Delayer.FIBONACCI;
+
+Retry retry = Retry.of("example", RetryConfig.custom()
+    .intervalFunction(FIBONACCI.millis(1, 300))
+    .retryExceptions(IOException.class, SQLException.class)
+    .maxAttempts(10)
+    .build());
+```
+#### Available strategies:
+* FIBONACCI — gentle growth
+* EXPONENTIAL — aggressive recovery
+* LINEAR — predictable retry rate
+* LOGARITHMIC — slow ramp-up
+
+### Core examples
+#### Function example
+```java
+Function<String, Integer> fn = toFunction(s -> {
+    if (s == null) throw new NullPointerException();
+    if (s.equals("bad")) throw new UnsupportedOperationException();
+    return s.length();
+});
+
+Either<Throwable, Integer> result = fn
+    .errorMappedFunction(
+         UnsupportedOperationException.class, IllegalStateException::new,
+         NullPointerException.class, IllegalArgumentException::new
+    )
+    .retryFunction(retry)
+    .tryWrap()
+    .toEither()
+    .apply("bad");
+```
+➡ *Readable, composable resilience* with minimal boilerplate.
+
+#### Supplier example
+
+```java
+Supplier<Integer> s = toSupplier(() -> {
+    String input = "hi";
+    if (input.length() < 3) throw new IllegalStateException("too short");
+    return input.length();
+});
+
+Supplier<Integer> safe = s
+    .errorConsumedSupplier(IllegalStateException.class, ex -> log.warn("Handled: {}", ex.getMessage()))
+    .retrySupplier(retry);
+
+Try<Integer> t = safe.tryWrap();
+Either<Throwable, Integer> e = t.toEither();
+```
+✅ Perfect for metrics or observability layers.
+
+#### CheckedBiFunction Example
+
+```java
+CheckedBiFunction<String, String, Integer> f = toCheckedBiFunction((a, b) -> {
+    if (a.equals(b)) throw new IOException("equal!");
+    if (a.isEmpty()) throw new SQLException("empty");
+    return (a + b).length();
+});
+
+CheckedBiFunction<String, String, Integer> resilient = f
+    .errorConsumedCheckedBiFunction(SQLException.class, ex -> log.warn("SQL error"))
+    .retryCheckedBiFunction(retry);
+
+Either<Throwable, Integer> out = resilient.tryWrap("a", "b").toEither();
+```
+✅ Handles checked exceptions
+✅ Applies retry semantics
+✅ Returns Vavr Either
+
+### Design Philosophy
+
+1️⃣ Declarative Resilience
+
+Resilience becomes expressive, not procedural:
+```java
+fn.errorMappedFunction(...)
+  .retryFunction(retry)
+  .tryWrap()
+  .toEither();
+```
+No try-catch pollution — the chain reads like a narrative.
+
+2️⃣ Checked Exceptions, Elevated
+
+Java checked exceptions (IOException, SQLException) are supported directly in CheckedFunction and CheckedBiFunction.
+3️⃣ Composability by Design
+
+Each method returns a new transformed function, not a side-effecting wrapper.
+This enables seamless chaining:
+```java
+fn.errorMappedFunction(...)
+  .bulkheadFunction(bh)
+  .circuitBreakFunction(cb)
+  .retryFunction(retry)
+  .tryWrap();
+```
+4️⃣ Observability-First
+
+Because wrappers are built on Resilience4j, metrics like retry attempts, success/failure counts,
+and circuit state are directly accessible.
+
+5️⃣  Building Exception made easier
+
+Often, we may find building exception in a context can be very mundane, tedious, repetitive and verbose leading
+to most of the real estate in the coding occupied by exception building drudge. Most of the time the finite set of 
+errors are codified to enums with a short description of the error and for web applications it is prudent to accompany
+by with HTTPStatus. Here is an example following a logger style of convenience.
+```java
+CREDENTIAL_MISSING.toCommonRTE(
+        "Missing or invalid credential ID: {}", request.getCredentialId())
+    .logInfo();
+```
+A variant to the above is to provide a key based marker in the message template such as
+```java
+CREDENTIAL_MISSING.toCommonRTE(
+        "Missing or invalid credential ID: {credId}", Map.of("credId", request.getCredentialId()))
+    .logInfo();
+```
+The common runtime exception class offers override setters in fluent way to reset detail message or status etc 
+
+### Advanced Patterns
+
+#### Primary + Fallback
+
+```java
+var primarySafe = primarySupplier.retrySupplier(primaryRetry);
+var fallbackSafe = fallbackSupplier.retrySupplier(fallbackRetry);
+
+var result = primarySafe.tryWrap()
+    .recoverWith(err -> fallbackSafe.tryWrap())
+    .get();
+```
+#### Circuit Breaker, Retry
+```java
+var circuitSafe = fn
+    .circuitBreakFunction(circuitBreaker)
+    .retryFunction(retry)
+    .tryWrap();
+```
+### Full example
+```java
+import lombok.experimental.ExtensionMethod;
+import io.github.resilience4j.retry.Retry;
+import io.github.resilience4j.retry.RetryConfig;
+import io.github.resilience4j.core.functions.CheckedBiFunction;
+import io.vavr.control.Either;
+import static io.github.venkateshamurthy.exceptional.Delayer.FIBONACCI;
+
+@ExtensionMethod({
+  io.github.venkateshamurthy.exceptional.RxFunction.class,
+  io.github.venkateshamurthy.exceptional.RxTry.class
+})
+public class FullExample {
+  public static void main(String[] args) {
+    Retry retry = Retry.of("demo", RetryConfig.custom()
+        .intervalFunction(FIBONACCI.millis(10, 500))
+        .maxAttempts(5)
+        .retryExceptions(java.io.IOException.class)
+        .build());
+
+    CheckedBiFunction<String, String, Integer> f = toCheckedBiFunction((a, b) -> {
+      if (a == null || b == null) throw new java.sql.SQLException("null");
+      if (a.equals(b)) throw new java.io.IOException("io");
+      return (a + b).length();
+    });
+
+    var resilient = f
+      .errorConsumedCheckedBiFunction(java.sql.SQLException.class, ex -> System.out.println("SQL consumed"))
+      .retryCheckedBiFunction(retry);
+
+    Either<Throwable, Integer> out = resilient.tryWrap("hello", "world").toEither();
+    out.peek(System.out::println).peekLeft(e -> e.printStackTrace());
+  }
+}
+```
+🧑 Author
+
+**Venkatesha Murthy**
+
+Collaborative technologist and creator of Exception-Retry, a library designed to unify 
+resilience, readability, and functional purity in Java.
+
+------------------------------------------
+“Functional elegance meets production resilience.”
+— Exception-Retry Design Philosophy

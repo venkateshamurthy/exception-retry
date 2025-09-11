@@ -2,6 +2,7 @@ package io.github.venkateshamurthy.exceptional;
 
 import io.github.resilience4j.bulkhead.Bulkhead;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
+import io.github.resilience4j.core.functions.CheckedBiFunction;
 import io.github.resilience4j.core.functions.CheckedSupplier;
 import io.github.resilience4j.ratelimiter.RateLimiter;
 import io.github.resilience4j.retry.Retry;
@@ -28,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @Slf4j
-@ExtensionMethod({RxSupplier.class, RxTry.class})
+@ExtensionMethod({RxSupplier.class, RxTry.class, Eithers.class})
 class RxSupplierTest {
     private final int retryMaxAttempts = 5;
     Bulkhead bh;
@@ -76,7 +77,7 @@ class RxSupplierTest {
             final AtomicInteger i = new AtomicInteger(-1);
             @Override
             public String get()  {
-                log.info("I="+i.incrementAndGet());
+                log.debug("I="+i.incrementAndGet());
                 if(i.get()      < number - 3) throw new RuntimeException(i+"-runtimeException");
                 else if(i.get() < number - 2) throw new NullPointerException(i+"-nullptr");
                 else if(i.get() < number - 1) throw new ArrayIndexOutOfBoundsException(i+"-arrayIndexException");
@@ -108,7 +109,7 @@ class RxSupplierTest {
             final AtomicInteger i = new AtomicInteger(-1);
             @Override
             public String get()  {
-                log.info("I="+i.incrementAndGet());
+                log.debug("I="+i.incrementAndGet());
                 if(i.get()      < number - 3) throw new RuntimeException(i+"-runtimeException");
                 else if(i.get() < number - 2) throw new NullPointerException(i+"-nullptr");
                 else if(i.get() < number - 1) throw new ArrayIndexOutOfBoundsException(i+"-arrayIndexException");
@@ -140,7 +141,7 @@ class RxSupplierTest {
             final AtomicInteger i = new AtomicInteger(-1);
             @Override
             public String get()  {
-                log.info("I="+i.incrementAndGet());
+                log.debug("I="+i.incrementAndGet());
                 if(i.get()      < number - 3) throw new RuntimeException(i+"-runtimeException");
                 else if(i.get() < number - 2) throw new NullPointerException(i+"-nullptr");
                 else if(i.get() < number - 1) throw new ArrayIndexOutOfBoundsException(i+"-arrayIndexException");
@@ -172,7 +173,7 @@ class RxSupplierTest {
             final AtomicInteger i = new AtomicInteger(-1);
             @Override
             public String get()  {
-                log.info("I="+i.incrementAndGet());
+                log.debug("I="+i.incrementAndGet());
                 if(i.get()      < number - 3) throw new RuntimeException(i+"-runtimeException");
                 else if(i.get() < number - 2) throw new NullPointerException(i+"-nullptr");
                 else if(i.get() < number - 1) throw new ArrayIndexOutOfBoundsException(i+"-arrayIndexException");
