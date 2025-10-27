@@ -19,6 +19,7 @@ import static io.github.venkateshamurthy.exceptional.RxTry.rteMapper;
  * A Runnable wrapper convenience utility covering {@link Runnable}, {@link CheckedRunnable}
  */
 @ExtensionMethod(RxTry.class)
+@SuppressWarnings("java:S1118")
 public class RxRunnable {
     /**
      * A reflexive wrapper to {@link Runnable} that helps in method chaining.

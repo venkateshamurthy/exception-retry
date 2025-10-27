@@ -15,7 +15,7 @@ import lombok.experimental.UtilityClass;
 /**
  * A wrappering utility for {@link Single} and {@link Observable}
  */
-@UtilityClass
+@UtilityClass  @SuppressWarnings("java:S1118")
 public class RxSingularObservables {
     /**
      * A {@link Retry} wrappering {@link Observable}

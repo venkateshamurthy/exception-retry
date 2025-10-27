@@ -21,7 +21,7 @@ import static io.github.venkateshamurthy.exceptional.RxTry.ceMapper;
  * Eithers is a convenient utility to convert different forms of executors to [@Either}
  */
 @ExtensionMethod({RxFunction.class, RxSupplier.class, RxTry.class, RxConsumer.class, RxRunnable.class})
-@UtilityClass
+@UtilityClass  @SuppressWarnings("java:S1118")
 public class Eithers {
     /**
      * An {@link Either either's} value or exception getter without any translations

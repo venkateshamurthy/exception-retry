@@ -19,7 +19,7 @@ import static io.github.venkateshamurthy.exceptional.RxTry.rteMapper;
  */
 @UtilityClass
 @ExtensionMethod(RxTry.class)
-@SuppressWarnings("javadoc")
+@SuppressWarnings("java:S1118")
 public class RxFunction {
     /**
      * A reflexive function for {@link BinaryOperator}

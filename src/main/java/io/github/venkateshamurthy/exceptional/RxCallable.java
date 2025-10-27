@@ -20,7 +20,7 @@ import static io.github.venkateshamurthy.exceptional.RxTry.ceMapper;
  */
 @Slf4j
 @ExtensionMethod(RxTry.class)
-@UtilityClass
+@UtilityClass  @SuppressWarnings("java:S1118")
 public class RxCallable {
     /**
      * A reflexive wrapper on the callable that helps in method chaining

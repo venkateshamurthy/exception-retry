@@ -1,8 +1,6 @@
 package io.github.venkateshamurthy.exceptional;
 
 import io.github.resilience4j.core.functions.CheckedSupplier;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import lombok.experimental.ExtensionMethod;
 import org.junit.jupiter.api.Test;
 
@@ -19,9 +17,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 /**
  * A test for {@link RxTry}
  */
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @ExtensionMethod({RxTry.class, RxRunnable.class, RxCallable.class, RxSupplier.class})
-public class RxTryTest {
+class RxTryTest {
 
     @Test
     void testMapExceptionWithSupplier() {

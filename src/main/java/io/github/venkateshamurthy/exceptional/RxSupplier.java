@@ -21,7 +21,7 @@ import static io.github.venkateshamurthy.exceptional.RxTry.rteMapper;
 /**
  * A convenient wrapper to {@link RxSupplier}
  */
-@UtilityClass
+@UtilityClass  @SuppressWarnings("java:S1118")
 @ExtensionMethod(RxTry.class)
 public class RxSupplier {
     /**

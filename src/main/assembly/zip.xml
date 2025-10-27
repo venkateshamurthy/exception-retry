@@ -11,8 +11,8 @@
             <directory>${project.build.directory}</directory>
             <outputDirectory>io/github/venkateshamurthy/exception-retry/${project.version}</outputDirectory>
             <includes>
-                <include>*.jar</include>
-                <include>*.jar.asc</include>
+                <include>${project.artifactId}*.jar</include>
+                <include>${project.artifactId}*.jar.asc</include>
                 <include>*.pom</include>
                 <include>*.pom.asc</include>
                 <include>*.md5</include>

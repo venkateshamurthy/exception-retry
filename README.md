@@ -66,7 +66,7 @@ Add the following to your Maven pom.xml:
 <dependency>
     <groupId>io.github.venkateshamurthy</groupId>
     <artifactId>exception-retry</artifactId>
-    <version>1.4</version> <!-- replace with latest -->
+    <version>1.5</version> <!-- replace with latest -->
 </dependency>
 ```
 ### Quick Start
@@ -201,13 +201,13 @@ to most of the real estate in the coding occupied by exception building drudge. 
 errors are codified to enums with a short description of the error and for web applications it is prudent to accompany
 by with HTTPStatus. Here is an example following a logger style of convenience.
 ```java
-CREDENTIAL_MISSING.toCommonRTE(
+CREDENTIAL_MISSING.toCommonRTE("CDN Access Creds are wrong",
         "Missing or invalid credential ID: {}", request.getCredentialId())
     .logInfo();
 ```
 A variant to the above is to provide a key based marker in the message template such as
 ```java
-CREDENTIAL_MISSING.toCommonRTE(
+CREDENTIAL_MISSING.toCommonRTE("CDN Access Creds are wrong",
         "Missing or invalid credential ID: {credId}", Map.of("credId", request.getCredentialId()))
     .logInfo();
 ```

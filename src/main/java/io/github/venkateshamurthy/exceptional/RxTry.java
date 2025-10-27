@@ -33,7 +33,7 @@ import static org.apache.commons.lang3.exception.ExceptionUtils.throwableOfType;
  *</p>
  * @author venkateshamurthy.
  */
-@UtilityClass
+@UtilityClass  @SuppressWarnings("java:S1186")
 public class RxTry {
     /** A common Checked Exception Mapper. */
     public static final Function<Throwable, Exception> ceMapper = t -> throwableOfType(t, Exception.class);

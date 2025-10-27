@@ -13,7 +13,7 @@ import java.util.function.Consumer;
 /**
  * A {@link Consumer} and {@link CheckedConsumer} wrappering utility.
  */
-@UtilityClass
+@UtilityClass  @SuppressWarnings("java:S1118")
 public class RxConsumer {
     /**
      * Reflexive function
