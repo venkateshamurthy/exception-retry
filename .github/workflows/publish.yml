@@ -59,7 +59,7 @@ jobs:
       # Uses SONAR_TOKEN + SONAR_ORG for external reporting
       # ============================================================
       - name: SonarCloud analysis
-        if: ${{ secrets.SONAR_TOKEN && secrets.SONAR_ORG }}
+        if: "${{ secrets.SONAR_TOKEN && secrets.SONAR_ORG }}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # built-in token for PR context
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
