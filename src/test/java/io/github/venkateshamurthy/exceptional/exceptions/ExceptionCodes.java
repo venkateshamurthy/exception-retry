@@ -6,7 +6,7 @@ import lombok.ToString;
 import org.springframework.http.HttpStatus;
 
 @RequiredArgsConstructor @Getter @ToString(exclude = {"status"})
-enum ExceptionCodes implements ExceptionCode {
+public enum ExceptionCodes implements ExceptionCode {
     CREDENTIAL_MISSING("Credential is missing", HttpStatus.UNPROCESSABLE_ENTITY),
     CREDENTIALS_NOT_FOUND("Credential could not be accessed from store", HttpStatus.INTERNAL_SERVER_ERROR),
     CREDENTIAL_NOT_CREATED("Unable to create credential", HttpStatus.BAD_REQUEST),
