@@ -51,15 +51,31 @@ jobs:
       # ============================================================
       - name: Import GPG private key
         run: |
-          echo "${{ env.GPG_PRIVATE_KEY }}" | gpg --batch --import
-          CODE=$?
-          if [ "$CODE" != "0" ] && [ "$CODE" != "1" ]; then
-          echo "❌ GPG import failed with code $CODE"
-          exit $CODE
-          else
-          echo "✅ GPG import successful or already imported"
+          echo "${{ env.GPG_PRIVATE_KEY }}" | gpg --batch --quiet --import || true
+          
+          echo "🔍 Checking for imported GPG key: ${{ env.MAVEN_GPG_KEYNAME }}"
+          gpg --list-secret-keys --keyid-format=long
+          
+          # Extract imported key IDs (in uppercase for comparison)
+          IMPORTED_KEY_IDS=$(gpg --list-secret-keys --keyid-format=long | grep sec | awk '{print $2}' | cut -d'/' -f2 | tr '[:lower:]' '[:upper:]')
+          EXPECTED_KEY_ID=$(echo "${{ env.MAVEN_GPG_KEYNAME }}" | tr '[:lower:]' '[:upper:]')
+          
+          echo "✅ Expected Key ID: $EXPECTED_KEY_ID"
+          echo "🔑 Imported Keys: $IMPORTED_KEY_IDS"
+          
+          MATCH_FOUND=false
+          for KEY in $IMPORTED_KEY_IDS; do
+          if [ "$KEY" = "$EXPECTED_KEY_ID" ]; then
+          MATCH_FOUND=true
+          echo "✅ GPG key match confirmed: $KEY"
+          break
           fi
-          gpg --list-secret-keys --keyid-format=long | grep -i ${{ env.MAVEN_GPG_KEYNAME }}
+          done
+          
+          if [ "$MATCH_FOUND" = false ]; then
+          echo "❌ ERROR: Imported GPG key does not match expected key ID: $EXPECTED_KEY_ID"
+          exit 2
+          fi
 
       # ============================================================
       # 4️⃣ Build and test locally
