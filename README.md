@@ -1,10 +1,13 @@
 # exception-retry
 
-A sample code to explore resilience-4j and rxJava3
+A sample code to explore resilience-4j, io.vavr.Try and rxJava3
 
 ## How to build and upload to central.sonatype.org
 1. You can just use ```mvn clean test``` (without passphrase) for local testing
-2. After you have git add the source files and git commit done then use scripts/release.sh
+2. Run javadoc, and other verifications such as sonar:sonar to ensure everything is on order 
+3. After you have finally done git add the source files and git commit done then use 
+```scripts/release.sh``` that will directly upload the artifact
+
 # ⚡ Exception-Retry — Functional Resilience for Java
 
 > **Elegant, composable error handling and retries** powered by [Resilience4j](https://resilience4j.readme.io/), [Vavr](https://www.vavr.io/), and Lombok’s [`@ExtensionMethod`](https://projectlombok.org/features/experimental/ExtensionMethod).
@@ -12,11 +15,11 @@ A sample code to explore resilience-4j and rxJava3
 [![Build](https://img.shields.io/github/actions/workflow/status/venkateshamurthy/exception-retry/publish.yml?branch=main&logo=github&style=for-the-badge)](https://github.com/venkateshamurthy/exception-retry/actions)
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.venkateshamurthy/exception-retry.svg?color=blue&logo=apachemaven&style=for-the-badge)](https://central.sonatype.com/artifact/io.github.venkateshamurthy/exception-retry)
 [![Javadocs](https://javadoc.io/badge2/io.github.venkateshamurthy/exception-retry/javadoc.svg?style=for-the-badge)](https://javadoc.io/doc/io.github.venkateshamurthy/exception-retry)
-[![License](https://img.shields.io/github/license/venkateshamurthy/exception-retry.svg?style=for-the-badge&?cacheSeconds=60)](LICENSE)
+[![License](https://img.shields.io/github/license/venkateshamurthy/exception-retry.svg?style=for-the-badge&cacheSeconds=60)](https://github.com/venkateshamurthy/exception-retry/blob/main/LICENSE)
 [![Java](https://img.shields.io/badge/Java-17%2B-blue?logo=openjdk&style=for-the-badge)](https://openjdk.org/)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=io.github.venkateshamurthy%3Aexception-retry&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=io.github.venkateshamurthy%3Aexception-retry)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=io.github.venkateshamurthy:exception-retry&metric=sqale_rating)](https://sonarcloud.io/summary/overall?id=io.github.venkateshamurthy%3Aexception-retry&branch=main)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=io.github.venkateshamurthy%3Aexception-retry&metric=alert_status&branch=main)](https://sonarcloud.io/summary/overall?id=io.github.venkateshamurthy%3Aexception-retry&branch=main)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=io.github.venkateshamurthy%3Aexception-retry&metric=coverage)](https://sonarcloud.io/summary/new_code?id=io.github.venkateshamurthy%3Aexception-retry)
-[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=io.github.venkateshamurthy%3Aexception-retry&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=io.github.venkateshamurthy%3Aexception-retry)
 ---
 
 ## 🌱 Overview

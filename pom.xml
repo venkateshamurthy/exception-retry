@@ -47,7 +47,14 @@
         </developer>
     </developers>
 
-    <properties><main.class>io.github.venkateshamurthy.exceptional.App</main.class></properties>
+    <properties>
+        <main.class>io.github.venkateshamurthy.exceptional.App</main.class>
+        <sonar.branch.name>main</sonar.branch.name>
+        <sonar.organization>venkateshamurthy-github</sonar.organization>
+        <sonar.projectKey>io.github.venkateshamurthy:exception-retry</sonar.projectKey>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <sonar.coverage.jacoco.xmlReportPaths>target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+    </properties>
 
     <dependencies>
         <!-- These are version-managed in parent; no explicit versions needed -->
