@@ -5,6 +5,8 @@ name: Build, Analyze, and Publish (Maven Central + GitHub Packages)
 
 on:
   push:
+    branches:
+      - main
     tags:
       - 'v*'    # e.g., v1.0.0 – run on version tags
   workflow_dispatch:  # allow manual trigger
