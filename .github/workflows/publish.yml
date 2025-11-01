@@ -40,7 +40,7 @@ jobs:
           gpg --list-secret-keys --keyid-format=long
 
       - name: Verify imported GPG key (optional)
-        run: gpg --fingerprint ${{ secrets.MAVEN_GPG_KEYNAME }}
+        run: gpg --list-secret-keys --keyid-format=long | grep -i ${{ secrets.MAVEN_GPG_KEYNAME }}
 
       # ============================================================
       # 4️⃣ Build and test locally
@@ -59,7 +59,7 @@ jobs:
       # Uses SONAR_TOKEN + SONAR_ORG for external reporting
       # ============================================================
       - name: SonarCloud analysis
-        if: secrets.SONAR_TOKEN != ''
+        if: ${{ secrets.SONAR_TOKEN != '' && secrets.SONAR_ORG != ''}}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # built-in token for PR context
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -68,6 +68,18 @@ jobs:
             -Dsonar.organization=${{ secrets.SONAR_ORG }} \
             -Dsonar.host.url=https://sonarcloud.io \
             -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+
+      # Setup from settings.xml
+      - name: Set up settings.xml for Maven Central
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+          server-id: central
+          server-username: MAVEN_CENTRAL_USER
+          server-password: MAVEN_CENTRAL_TOKEN
+          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+          gpg-passphrase: MAVEN_GPG_PASSPHRASE
 
       # ============================================================
       # 6️⃣ Deploy to Maven Central
