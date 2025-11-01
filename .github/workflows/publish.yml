@@ -51,7 +51,7 @@ jobs:
       # ============================================================
       - name: Import GPG private key
         run: |
-          echo "${{ env.GPG_PRIVATE_KEY }}" | gpg --batch --import
+          echo "${{ env.GPG_PRIVATE_KEY }}" | gpg --batch --import || true
           gpg --list-secret-keys --keyid-format=long | grep -i ${{ env.MAVEN_GPG_KEYNAME }}
 
       # ============================================================
