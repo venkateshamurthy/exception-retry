@@ -268,7 +268,49 @@ public class FullExample {
   }
 }
 ```
-🧑 Author
+
+## 🏗️ CI/CD Architecture – Maven Central + GitHub Packages
+
+The following diagram illustrates the complete **build, signing, and publishing flow**
+for projects inheriting from `modern-java-parent`.  
+It highlights how **GitHub Actions**, **Maven Central**, **GitHub Packages**, and **SonarCloud**
+interact through securely managed secrets and tokens.
+
+<p align="center">
+  <img src="docs/images/ci-cd-architecture.png" alt="CI/CD Architecture Diagram" width="700"/>
+</p>
+
+**Diagram overview:**
+- 🔹 **GitHub Actions Runner** executes the `publish.yml` workflow defined in each repository.
+- 🔹 Environment secrets (e.g., `GH_TOKEN`, `MAVEN_CENTRAL_TOKEN`, `GPG_PRIVATE_KEY`) are injected securely at runtime.
+- 🔹 **Maven** builds, tests, and signs all artifacts using your GPG key.
+- 🔹 Signed artifacts are then:
+    - Published to **Maven Central** (authenticated via `MAVEN_CENTRAL_USER` / `MAVEN_CENTRAL_TOKEN`)
+    - Deployed to **GitHub Packages** (using your `GH_TOKEN` Personal Access Token)
+- 🔹 **SonarCloud** analysis is optionally triggered using `SONAR_ORG` / `SONAR_TOKEN`.
+- 🔹 **GitHub Pages** automatically hosts generated Javadocs via the built-in `GITHUB_TOKEN`.
+
+> 🧠 *Each project maintains its own `publish.yml` workflow and secrets — ensuring isolated,
+secure, and independently verifiable release automation.*
+
+---
+
+### 🔐 Token Reference Summary
+
+| Token / Secret | Purpose | Provided By |
+|----------------|----------|--------------|
+| `GH_TOKEN` | Publish artifacts to GitHub Packages | Personal Access Token (repo secret) |
+| `GPG_PRIVATE_KEY` | Sign artifacts before publishing | Exported GPG key (repo secret) |
+| `MAVEN_CENTRAL_USER` / `MAVEN_CENTRAL_TOKEN` | Authenticate with Sonatype Central | Sonatype account |
+| `MAVEN_GPG_KEYNAME` / `MAVEN_GPG_PASSPHRASE` | Identify and unlock GPG key | Your keypair |
+| `SONAR_ORG` / `SONAR_TOKEN` | Enable SonarCloud analysis | SonarCloud |
+| `GITHUB_TOKEN` | Publish docs or releases to this repo | Auto-provided by GitHub |
+
+---
+
+📘 *This CI/CD workflow ensures a clean, repeatable release pipeline for modern Java projects — combining artifact signing, dual registry publishing, and static analysis in one automated process.*
+
+## 🧑 Author
 
 **Venkatesha Murthy**
 

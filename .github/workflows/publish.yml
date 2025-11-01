@@ -1,0 +1,115 @@
+name: Build, Analyze, and Publish (Maven Central + GitHub Packages)
+
+on:
+  push:
+    tags:
+      - 'v*'    # e.g., v1.0.0 – run on version tags
+  workflow_dispatch:  # allow manual trigger
+
+jobs:
+  release:
+    name: Verify, Analyze, and Publish
+    runs-on: ubuntu-latest
+
+    steps:
+      # ============================================================
+      # 1️⃣ Checkout code
+      # Uses the built-in GITHUB_TOKEN (read-only checkout)
+      # ============================================================
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      # ============================================================
+      # 2️⃣ Setup Java
+      # Caches Maven dependencies for faster runs
+      # ============================================================
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+          cache: maven
+
+      # ============================================================
+      # 3️⃣ Import your GPG private key for signing artifacts
+      # Uses GPG_PRIVATE_KEY + MAVEN_GPG_KEYNAME + MAVEN_GPG_PASSPHRASE
+      # ============================================================
+      - name: Import GPG private key
+        run: |
+          echo "${{ secrets.GPG_PRIVATE_KEY }}" | gpg --batch --import
+          gpg --list-secret-keys --keyid-format=long
+
+      - name: Verify imported GPG key (optional)
+        run: gpg --fingerprint ${{ secrets.MAVEN_GPG_KEYNAME }}
+
+      # ============================================================
+      # 4️⃣ Build and test locally
+      # Uses only Maven config – does not deploy yet
+      # ============================================================
+      - name: Build and verify
+        env:
+          MAVEN_CENTRAL_USER: ${{ secrets.MAVEN_CENTRAL_USER }}
+          MAVEN_CENTRAL_TOKEN: ${{ secrets.MAVEN_CENTRAL_TOKEN }}
+          MAVEN_GPG_KEYNAME: ${{ secrets.MAVEN_GPG_KEYNAME }}
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+        run: mvn -B clean verify -P release-profile
+
+      # ============================================================
+      # 5️⃣ (Optional) Static analysis with SonarCloud
+      # Uses SONAR_TOKEN + SONAR_ORG for external reporting
+      # ============================================================
+      - name: SonarCloud analysis
+        if: secrets.SONAR_TOKEN != ''
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # built-in token for PR context
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          mvn -B org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+            -Dsonar.organization=${{ secrets.SONAR_ORG }} \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+
+      # ============================================================
+      # 6️⃣ Deploy to Maven Central
+      # Uses MAVEN_CENTRAL_USER + MAVEN_CENTRAL_TOKEN
+      # and your GPG credentials for signing.
+      # ============================================================
+      - name: Deploy to Maven Central
+        env:
+          MAVEN_CENTRAL_USER: ${{ secrets.MAVEN_CENTRAL_USER }}
+          MAVEN_CENTRAL_TOKEN: ${{ secrets.MAVEN_CENTRAL_TOKEN }}
+          MAVEN_GPG_KEYNAME: ${{ secrets.MAVEN_GPG_KEYNAME }}
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+        run: mvn -B deploy -P release-profile
+
+      # ============================================================
+      # 7️⃣ Deploy to GitHub Packages
+      # Uses GH_TOKEN (your personal PAT) because
+      # built-in GITHUB_TOKEN lacks write:packages permission.
+      # ============================================================
+      - name: Deploy to GitHub Packages
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          MAVEN_GPG_KEYNAME: ${{ secrets.MAVEN_GPG_KEYNAME }}
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+        run: |
+          mvn -B deploy \
+            -DaltDeploymentRepository=github::default::https://maven.pkg.github.com/${{ github.repository }}
+
+      # ============================================================
+      # 8️⃣ Generate & publish Javadocs
+      # Uses the built-in GITHUB_TOKEN because it is injected by GitHub itself
+      # and further automatically has write access to the current repo’s gh-pages branch.
+      # ============================================================
+      - name: Generate and publish Javadocs
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          # ✅ Use the built-in token — no need to create in secrets
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./target/site/apidocs
+          enable_jekyll: false
+          commit_message: "Update API docs for ${{ github.ref_name }}"
+        env:
+          MAVEN_GPG_KEYNAME: ${{ secrets.MAVEN_GPG_KEYNAME }}
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+        run: mvn -B javadoc:javadoc
