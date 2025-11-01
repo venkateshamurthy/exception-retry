@@ -97,11 +97,14 @@ jobs:
             -DaltDeploymentRepository=github::default::https://maven.pkg.github.com/${{ github.repository }}
 
       # ============================================================
-      # 8️⃣ Generate & publish Javadocs
+      # 8️⃣ Generate Javadocs
       # Uses the built-in GITHUB_TOKEN because it is injected by GitHub itself
       # and further automatically has write access to the current repo’s gh-pages branch.
       # ============================================================
-      - name: Generate and publish Javadocs
+      - name: Generate Javadocs
+        run: mvn -B javadoc:javadoc
+
+      - name: Publish Javadocs to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           # ✅ Use the built-in token — no need to create in secrets
@@ -112,4 +115,4 @@ jobs:
         env:
           MAVEN_GPG_KEYNAME: ${{ secrets.MAVEN_GPG_KEYNAME }}
           MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
-        run: mvn -B javadoc:javadoc
+
