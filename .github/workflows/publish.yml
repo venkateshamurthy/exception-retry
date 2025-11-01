@@ -1,3 +1,6 @@
+permissions:
+  contents: write
+
 name: Build, Analyze, and Publish (Maven Central + GitHub Packages)
 
 on:
@@ -93,6 +96,7 @@ jobs:
         run: |
           mvn -B org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
             -Dsonar.organization=${{ env.SONAR_ORG }} \
+            -Dsonar.projectKey=io.github.venkateshamurthy:exception-retry \
             -Dsonar.host.url=https://sonarcloud.io \
             -Dsonar.login=${{ env.SONAR_TOKEN }}
 

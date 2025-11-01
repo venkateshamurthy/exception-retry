@@ -4,29 +4,19 @@ A sample code to explore resilience-4j and rxJava3
 
 ## How to build and upload to central.sonatype.org
 1. You can just use ```mvn clean test``` (without passphrase) for local testing
-2. If you intend to push to next version increase the version number (say for eg: 1.2 -> 1.3).
-   * Do ```mvn clean install site -s ./settings.xml```  It might ask for the gpg passphrase so please be ready with it 
-   * This generates exception-retry-&lt;version&gt;-zip.zip
-4. Goto https://central.sonatype.com/publishing and upload the component(may be login with github login).details follows
-   * Namespace       : io.github.venkateshamurthy
-   * Deployment name : io.github.venkateshamurthy:exception-retry:&lt;version&gt; 
-   * Choose the file : target/exception-retry-&lt;version&gt;-zip.zip to upload as package
-   * Click validate and post validation. click publish. please note that once published it cannot be revoked 
-     * so be cautious what you are leaving the public to consume
-     * Keep code coverage > 90-95% and all the public  methods java-doc written
-     * Add examples of use in https://github.com/venkateshamurthy/exception-retry-example
-5. The uploading to sonatype requires to have proper ```settings.xml```. Make sure you have GPG key Ids created upfront and
-updated in settings.xml. Please refer to https://central.sonatype.org/publish/requirements/gpg/ to get an accurate 
-understanding as even one misstep here cannot get your package uploaded
+2. After you have git add the source files and git commit done then use scripts/release.sh
 # ⚡ Exception-Retry — Functional Resilience for Java
 
 > **Elegant, composable error handling and retries** powered by [Resilience4j](https://resilience4j.readme.io/), [Vavr](https://www.vavr.io/), and Lombok’s [`@ExtensionMethod`](https://projectlombok.org/features/experimental/ExtensionMethod).
 
-[![Build](https://img.shields.io/github/actions/workflow/status/venkateshamurthy/exception-retry/maven.yml?branch=master)](https://github.com/venkateshamurthy/exception-retry/actions)
-[![Maven Central](https://img.shields.io/maven-central/v/io.github.venkateshamurthy/exception-retry.svg?color=blue)](https://search.maven.org/artifact/io.github.venkateshamurthy/exception-retry)
-[![License](https://img.shields.io/github/license/venkateshamurthy/exception-retry.svg)](LICENSE)
-[![Java](https://img.shields.io/badge/java-17%2B-blue)](https://openjdk.org/)
-
+[![Build](https://img.shields.io/github/actions/workflow/status/venkateshamurthy/exception-retry/publish.yml?branch=main&logo=github&style=for-the-badge)](https://github.com/venkateshamurthy/exception-retry/actions)
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.venkateshamurthy/exception-retry.svg?color=blue&logo=apachemaven&style=for-the-badge)](https://central.sonatype.com/artifact/io.github.venkateshamurthy/exception-retry)
+[![Javadocs](https://javadoc.io/badge2/io.github.venkateshamurthy/exception-retry/javadoc.svg?style=for-the-badge)](https://javadoc.io/doc/io.github.venkateshamurthy/exception-retry)
+[![License](https://img.shields.io/github/license/venkateshamurthy/exception-retry.svg?style=for-the-badge)](LICENSE)
+[![Java](https://img.shields.io/badge/Java-17%2B-blue?logo=openjdk&style=for-the-badge)](https://openjdk.org/)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=io.github.venkateshamurthy%3Aexception-retry&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=io.github.venkateshamurthy%3Aexception-retry)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=io.github.venkateshamurthy%3Aexception-retry&metric=coverage)](https://sonarcloud.io/summary/new_code?id=io.github.venkateshamurthy%3Aexception-retry)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=io.github.venkateshamurthy%3Aexception-retry&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=io.github.venkateshamurthy%3Aexception-retry)
 ---
 
 ## 🌱 Overview
