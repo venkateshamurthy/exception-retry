@@ -12,7 +12,7 @@ A sample code to explore resilience-4j and rxJava3
 [![Build](https://img.shields.io/github/actions/workflow/status/venkateshamurthy/exception-retry/publish.yml?branch=main&logo=github&style=for-the-badge)](https://github.com/venkateshamurthy/exception-retry/actions)
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.venkateshamurthy/exception-retry.svg?color=blue&logo=apachemaven&style=for-the-badge)](https://central.sonatype.com/artifact/io.github.venkateshamurthy/exception-retry)
 [![Javadocs](https://javadoc.io/badge2/io.github.venkateshamurthy/exception-retry/javadoc.svg?style=for-the-badge)](https://javadoc.io/doc/io.github.venkateshamurthy/exception-retry)
-[![License](https://img.shields.io/github/license/venkateshamurthy/exception-retry.svg?style=for-the-badge)](https://github.com/venkateshamurthy/exception-retry/blob/main/LICENSE)
+[![License](https://img.shields.io/github/license/venkateshamurthy/exception-retry.svg?style=for-the-badge&?cacheSeconds=60)](LICENSE)
 [![Java](https://img.shields.io/badge/Java-17%2B-blue?logo=openjdk&style=for-the-badge)](https://openjdk.org/)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=io.github.venkateshamurthy%3Aexception-retry&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=io.github.venkateshamurthy%3Aexception-retry)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=io.github.venkateshamurthy%3Aexception-retry&metric=coverage)](https://sonarcloud.io/summary/new_code?id=io.github.venkateshamurthy%3Aexception-retry)
