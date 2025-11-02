@@ -3,10 +3,10 @@
 A sample code to explore resilience-4j, io.vavr.Try and rxJava3
 
 ## How to build and upload to central.sonatype.org
-1. You can just use ```mvn clean test``` (without passphrase) for local testing
-2. Run javadoc, and other verifications such as sonar:sonar to ensure everything is on order 
-3. After you have finally done git add the source files and git commit done then use 
-```scripts/release.sh``` that will directly upload the artifact
+1. You can just use ```mvn clean test verify```  for local testing
+2. Run javadoc, and sonar:sonar and any other validations to ensure everything is in order 
+3. Do ```git add```, ```git commit``` and ```git push origin main``` .
+4. ```scripts/release.sh```  will directly upload the artifact
 
 # ⚡ Exception-Retry — Functional Resilience for Java
 
