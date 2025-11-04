@@ -9,7 +9,7 @@
     <parent>
         <groupId>io.github.venkateshamurthy</groupId>
         <artifactId>modern-java-parent</artifactId>
-        <version>1.3.0</version>
+        <version>1.5.0</version>
     </parent>
 
     <artifactId>exception-retry</artifactId>
@@ -48,6 +48,7 @@
     </developers>
 
     <properties>
+        <jacoco.haltOnFailure>false</jacoco.haltOnFailure>
         <main.class>io.github.venkateshamurthy.exceptional.App</main.class>
         <sonar.branch.name>main</sonar.branch.name>
         <sonar.organization>venkateshamurthy-github</sonar.organization>
@@ -80,4 +81,17 @@
         <dependency><groupId>org.assertj</groupId><artifactId>assertj-core</artifactId></dependency>
         <dependency><groupId>org.projectlombok</groupId><artifactId>lombok</artifactId></dependency>
     </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.owasp</groupId>
+                <artifactId>dependency-check-maven</artifactId>
+                <version>12.1.8</version>
+                <configuration>
+                    <disableXmlValidation>true</disableXmlValidation>
+                </configuration>
+            </plugin>
+
+        </plugins>
+    </build>
 </project>
