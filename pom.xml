@@ -48,8 +48,9 @@
     </developers>
 
     <properties>
-        <jacoco.haltOnFailure>false</jacoco.haltOnFailure>
+        <jacoco.haltOnFailure>true</jacoco.haltOnFailure>
         <main.class>io.github.venkateshamurthy.exceptional.App</main.class>
+        <sonar.qualitygate.wait>true</sonar.qualitygate.wait>
         <sonar.branch.name>main</sonar.branch.name>
         <sonar.organization>venkateshamurthy-github</sonar.organization>
         <sonar.projectKey>io.github.venkateshamurthy:exception-retry</sonar.projectKey>
