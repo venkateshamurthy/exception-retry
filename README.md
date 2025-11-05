@@ -13,13 +13,14 @@ A sample code to explore resilience-4j, io.vavr.Try and rxJava3
 > **Elegant, composable error handling and retries** powered by [Resilience4j](https://resilience4j.readme.io/), [Vavr](https://www.vavr.io/), and Lombok’s [`@ExtensionMethod`](https://projectlombok.org/features/experimental/ExtensionMethod).
 
 [![Build](https://img.shields.io/github/actions/workflow/status/venkateshamurthy/exception-retry/publish.yml?branch=main&logo=github&style=for-the-badge)](https://github.com/venkateshamurthy/exception-retry/actions)
-[![Maven Central](https://img.shields.io/maven-central/v/io.github.venkateshamurthy/exception-retry.svg?color=blue&logo=apachemaven&style=for-the-badge)](https://central.sonatype.com/artifact/io.github.venkateshamurthy/exception-retry)
-[![Javadocs](https://javadoc.io/badge2/io.github.venkateshamurthy/exception-retry/javadoc.svg?style=for-the-badge)](https://javadoc.io/doc/io.github.venkateshamurthy/exception-retry)
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.venkateshamurthy/exception-retry.svg?color=blue&logo=apachemaven&style=for-the-badge&cacheSeconds=30)](https://central.sonatype.com/artifact/io.github.venkateshamurthy/exception-retry)
+[![Javadocs](https://javadoc.io/badge2/io.github.venkateshamurthy/exception-retry/javadoc.svg?style=for-the-badge&&cacheSeconds=30)](https://javadoc.io/doc/io.github.venkateshamurthy/exception-retry)
 [![License](https://img.shields.io/github/license/venkateshamurthy/exception-retry.svg?style=for-the-badge&cacheSeconds=60)](https://github.com/venkateshamurthy/exception-retry/blob/main/LICENSE)
 [![Java](https://img.shields.io/badge/Java-17%2B-blue?logo=openjdk&style=for-the-badge)](https://openjdk.org/)
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=io.github.venkateshamurthy:exception-retry&metric=sqale_rating)](https://sonarcloud.io/summary/overall?id=io.github.venkateshamurthy%3Aexception-retry&branch=main)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=io.github.venkateshamurthy%3Aexception-retry&metric=alert_status&branch=main)](https://sonarcloud.io/summary/overall?id=io.github.venkateshamurthy%3Aexception-retry&branch=main)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=io.github.venkateshamurthy%3Aexception-retry&metric=coverage)](https://sonarcloud.io/summary/new_code?id=io.github.venkateshamurthy%3Aexception-retry)
+![OWASP Dependency-Check](https://img.shields.io/badge/OWASP%20Scan-Passed-brightgreen)
 ---
 
 ## 🌱 Overview
