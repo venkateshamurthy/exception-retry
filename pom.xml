@@ -9,11 +9,11 @@
     <parent>
         <groupId>io.github.venkateshamurthy</groupId>
         <artifactId>modern-java-parent</artifactId>
-        <version>1.6.0</version>
+        <version>1.7.0</version>
     </parent>
 
     <artifactId>exception-retry</artifactId>
-    <version>1.6.9</version>
+    <version>1.7-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>Exception Retry</name>
@@ -48,6 +48,7 @@
     </developers>
 
     <properties>
+        <nvd.api.endpoint>https://services.nvd.nist.gov/rest/json/cves/2.0/</nvd.api.endpoint>
         <jacoco.haltOnFailure>true</jacoco.haltOnFailure>
         <main.class>io.github.venkateshamurthy.exceptional.App</main.class>
         <sonar.qualitygate.wait>true</sonar.qualitygate.wait>
@@ -82,4 +83,28 @@
         <dependency><groupId>org.assertj</groupId><artifactId>assertj-core</artifactId></dependency>
         <dependency><groupId>org.projectlombok</groupId><artifactId>lombok</artifactId></dependency>
     </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <echo message="NVD_API_KEY: ${env.NVD_API_KEY}" />
+                                <echo message="nvd.ApiKey: ${nvd.ApiKey}" />
+                                <echo message="nvd.api.key: ${nvd.api.key}" />
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>

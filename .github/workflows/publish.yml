@@ -101,35 +101,49 @@ jobs:
             -Dsonar.organization=${{ env.SONAR_ORG }} \
             -Dsonar.projectKey=io.github.venkateshamurthy:exception-retry \
             -Dsonar.host.url=https://sonarcloud.io \
-            -Dsonar.login=${{ env.SONAR_TOKEN }}
+            -Dsonar.login=${{ env.SONAR_TOKEN }} \
+            -Dsonar.qualitygate.wait=true
+
+      # 6️⃣ Publish Snapshot (only on main)
+      - name: Publish Snapshot to Sonatype Central
+        if: github.ref == 'refs/heads/main'
+        run: mvn -B clean deploy -Prelease-profile -Psecurity-scan
 
       # ============================================================
-      # 6️⃣ Deploy to Maven Central
+      # 7️⃣ Deploy to Maven Central
       # Uses MAVEN_CENTRAL_USER + MAVEN_CENTRAL_TOKEN
       # and your GPG credentials for signing.
       # ============================================================
       - name: Deploy to Maven Central
-        run: mvn -B deploy -P release-profile
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          echo "🔖 Releasing version: $VERSION from base POM (eg: 1.7-SNAPSHOT)"
+          mvn -B versions:set -DnewVersion=$VERSION
+          mvn -B clean deploy -Prelease-profile -Psecurity-scan
 
       # ============================================================
-      # 7️⃣ Deploy to GitHub Packages
+      # 8️⃣ Deploy to GitHub Packages
       # Uses GH_TOKEN (your personal PAT) because
       # built-in GITHUB_TOKEN lacks write:packages permission.
       # ============================================================
       - name: Deploy to GitHub Packages
+        if: startsWith(github.ref, 'refs/tags/v')
         run: |
           mvn -B deploy \
             -DaltDeploymentRepository=github::default::https://maven.pkg.github.com/${{ github.repository }}
 
       # ============================================================
-      # 8️⃣ Generate Javadocs
+      # 9️⃣ Generate Javadocs
       # Uses the built-in GITHUB_TOKEN because it is injected by GitHub itself
       # and further automatically has write access to the current repo’s gh-pages branch.
       # ============================================================
       - name: Generate Javadocs
+        if: startsWith(github.ref, 'refs/tags/v')
         run: mvn -B javadoc:javadoc
 
       - name: Publish Javadocs to GitHub Pages
+        if: startsWith(github.ref, 'refs/tags/v')
         uses: peaceiris/actions-gh-pages@v3
         with:
           # ✅ Use the built-in token — no need to create in secrets
