@@ -151,4 +151,3 @@ jobs:
           publish_dir: ./target/site/apidocs
           enable_jekyll: false
           commit_message: "Update API docs for ${{ github.ref_name }}"
-
