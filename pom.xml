@@ -13,7 +13,7 @@
     </parent>
 
     <artifactId>exception-retry</artifactId>
-    <version>1.7-SNAPSHOT</version>
+    <version>1.7.1</version>
     <packaging>jar</packaging>
 
     <name>Exception Retry</name>
