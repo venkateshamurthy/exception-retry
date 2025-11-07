@@ -106,8 +106,8 @@ jobs:
 
       # 6️⃣ Publish Snapshot (only on main)
       - name: Publish Snapshot to Sonatype Central
-        if: github.ref == 'refs/heads/main'
-        run: mvn -B clean deploy -Prelease-profile -Psecurity-scan
+        if: github.ref_type == 'branch' && github.ref == 'refs/heads/main'
+        run: mvn -B clean deploy  -Psecurity-scan
 
       # ============================================================
       # 7️⃣ Deploy to Maven Central
@@ -115,7 +115,7 @@ jobs:
       # and your GPG credentials for signing.
       # ============================================================
       - name: Deploy to Maven Central
-        if: startsWith(github.ref, 'refs/tags/v')
+        if: github.ref_type == 'tag' && startsWith(github.ref_name, 'v')
         run: |
           VERSION=${GITHUB_REF#refs/tags/v}
           echo "🔖 Releasing version: $VERSION from base POM (eg: 1.7-SNAPSHOT)"
